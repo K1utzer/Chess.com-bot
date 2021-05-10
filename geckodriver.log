@@ -2287,3 +2287,30 @@ JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line
 
 ###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
+1620650527012	geckodriver	INFO	Listening on 127.0.0.1:59717
+1620650530105	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofilezNoAOe"
+1620650530534	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620650533230	Marionette	INFO	Listening on port 59727
+1620650533293	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620650710087	Marionette	INFO	Stopped listening on port 59727
+1620650711921	geckodriver	INFO	Listening on 127.0.0.1:60077
+1620650715010	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofile3iaQ1x"
+1620650715414	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620650717818	Marionette	INFO	Listening on port 60087
+1620650718213	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620651480235	Marionette	INFO	Stopped listening on port 60087
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1620651481739	geckodriver	INFO	Listening on 127.0.0.1:60876
+1620651484813	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofileaL37tY"
+1620651485198	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620651487697	Marionette	INFO	Listening on port 60884
+1620651487998	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+JavaScript error: resource:///actors/ContentMetaChild.jsm, line 179: InvalidStateError: JSWindowActorChild.sendAsyncMessage: JSWindowActorChild cannot send at the moment

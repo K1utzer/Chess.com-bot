@@ -122,6 +122,7 @@ def getBoard():
         screenimg = cv.imread(f"{path}screen.png", cv.IMREAD_UNCHANGED)
         maxValue = 0
         dots = "."
+        threshold = 0.5
         print("Searching board", end="\r")
         for c in range(int(maxValue+10)):
             print(f"Searching board {dots*c}", end="\r")
@@ -134,11 +135,13 @@ def getBoard():
                 maxLoc = max_loc
                 board_w = board_layout1.shape[1]
                 board_h = board_layout1.shape[0]
-            width = int(board_layout1.shape[1] * 95/100)
-            higth = int(board_layout1.shape[0] * 95/100)
+                if maxValue >= threshold:
+                    break 
+            width = int(board_layout1.shape[1] * 90/100)
+            higth = int(board_layout1.shape[0] * 90/100)
             board_layout1 = cv.resize(board_layout1, (width, higth))
         
-        threshold = 0.5
+
 
         if maxValue >= threshold:
             
@@ -247,8 +250,7 @@ def run_game(driver, chessEngine, board):
         return True
     else:
         try:
-            os.system('cls')
-            print(f"{alwaysPrint}\nEnemy turn")
+            print("Enemy turn", end="\r")
             game_ended = game_end(driver, gameOverMessageCount)
             if game_ended:
                 os.system('cls')
@@ -277,8 +279,8 @@ def getMoves(board, driver):
     #print(moves)
     if len(moves) <= movesCounter:
         return False
-    print()
     try:
+        print("Enemy turn")
         print(f"Enemy Move: {str(moves[len(moves)-1])}")
         zug = board.push_san(str(moves[len(moves)-1]))
         print(board)
