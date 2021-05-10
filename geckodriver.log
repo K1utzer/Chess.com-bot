@@ -2283,3 +2283,7 @@ console.warn: SearchSettings: "get: No settings file exists, new profile?" (new 
 1620649105043	Marionette	INFO	Listening on port 58253
 1620649105314	Marionette	WARN	TLS certificate errors will be ignored for this session
 JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620650525521	Marionette	INFO	Stopped listening on port 58253
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
