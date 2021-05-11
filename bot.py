@@ -33,6 +33,8 @@ config = configparser.ConfigParser()
 config.read("config.cfg")
 username = str(config.get("chess.com", "username"))
 password = str(config.get("chess.com", "password"))
+legit = bool(config.get("settings", "legit"))
+keepPlaying = bool(config.get("settings", "keepPlaying"))
 movesCounter = 0
 myturn = False
 fields_Cords = {}
@@ -85,7 +87,7 @@ def get_user_color(driver):
             else:
                 dot += "."
 
-    global alwaysPrint, pauseMaxTime
+    global alwaysPrint, pauseMaxTime, legit
     alwaysPrint = elem.text
     pattern = re.compile("(\d{1,2} \| \d{1,2})")
     gameModeTimes = re.findall('[0-9]+', pattern.search(elem.text).group())
@@ -97,6 +99,8 @@ def get_user_color(driver):
         pauseMaxTime = 14.0
     elif int(gameModeTimes[0]) >= 15:
         pauseMaxTime = 30.0
+    if not legit:
+        pauseMaxTime = 0
     print(elem.text)
     players = re.findall(r'(\w+)\s\(\d+\)', elem.text)
 
@@ -119,6 +123,7 @@ def getBoard():
         screenshot = pyautogui.screenshot()
         screenshot.save(f"{path}screen.png")
         board_layout1 = cv.imread(f"{path}layout1.PNG")
+        nextGame = cv.imread(f"{path}nextGame.png")
         screenimg = cv.imread(f"{path}screen.png", cv.IMREAD_UNCHANGED)
         maxValue = 0
         dots = "."
@@ -141,7 +146,6 @@ def getBoard():
             higth = int(board_layout1.shape[0] * 90/100)
             board_layout1 = cv.resize(board_layout1, (width, higth))
         
-
 
         if maxValue >= threshold:
             
@@ -383,7 +387,57 @@ def init():
     chessEngine = Engine('./stockfish_13_win_x64_bmi2/stockfish_13_win_x64_bmi2.exe', param={'Threads': 10, 'Ponder': None})
     board = chess.Board()
     return chessEngine, board
+def restart():
+    path = "figures/"
+    print("Next game")
+    try:
+        screenshot = pyautogui.screenshot()
+        screenshot.save(f"{path}screen.png")
+        nextGame = cv.imread(f"{path}nextGame.png")
+        screenimg = cv.imread(f"{path}screen.png", cv.IMREAD_UNCHANGED)
+        maxValue = 0
+        dots = "."
+        threshold = 0.8
+        print("Searching new game button", end="\r")
+        for c in range(int(maxValue+10)):
+            print(f"Searching new game button {dots*c}", end="\r")
+            board_result = cv.matchTemplate(screenimg, nextGame, cv.TM_CCOEFF_NORMED)
+        #cv.imshow('image', screenimg)
+        #cv.imshow('image', board)
+            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(board_result)
+            if max_val >= threshold:
+                maxValue = max_val
+                maxLoc = max_loc
+                board_w = nextGame.shape[1]
+                board_h = nextGame.shape[0]
+                if maxValue >= threshold:
+                    break 
+            width = int(nextGame.shape[1] * 90/100)
+            higth = int(nextGame.shape[0] * 90/100)
+            board_layout1 = cv.resize(nextGame, (width, higth))
+        if maxValue >= threshold:
+            
+            print("Found next game button")            
+                
+            top_left = maxLoc
+                #bottom_right = (top_left[0] + board_w, top_left[1] + board_h)
+                #cv.rectangle(screenimg, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
+                
+                #bottom_right = (int(top_left[0] + board_w/8), int(top_left[1] + board_h/8))
+                
+            field_w = board_w/8
+            field_h = board_h/8
 
+            bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
+            #cv.rectangle(screenimg, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)  
+            cv.circle(screenimg, top_left, 5, color=(0,0,255))
+            cv.imshow('Result', screenimg)
+            #cv.imwrite("board_result.jpg", screenimg)
+            click(top_left[0], top_left[1])
+        else:
+            print("Next game button not found")
+    except Exception as e:
+        print(e)
 def main(driver, chessEngine, board, newBoard):
     playerColor = get_user_color(driver)
     if newBoard:
@@ -395,6 +449,11 @@ def main(driver, chessEngine, board, newBoard):
         board = checkGameState(driver)
     while run_game(driver, chessEngine, board):
         time.sleep(0.5)
+    global keepPlaying
+    if keepPlaying:
+        time.sleep(8)
+        restart()
+    print()
     start(driver)
 def start(driver):
     global movesCounter
