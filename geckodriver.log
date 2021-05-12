@@ -2398,3 +2398,77 @@ console.warn: SearchSettings: "get: No settings file exists, new profile?" (new 
 1620765445490	Marionette	INFO	Listening on port 65160
 1620765445749	Marionette	WARN	TLS certificate errors will be ignored for this session
 JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620766229991	geckodriver	INFO	Listening on 127.0.0.1:64394
+1620766233048	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofileK6WQpG"
+1620766234084	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620766240136	Marionette	INFO	Listening on port 64431
+1620766240878	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+JavaScript error: https://www.chess.com/bundles/app/js/core.dll.a4838325.js, line 2: Error: Request aborted
+1620766731059	Marionette	INFO	Stopped listening on port 64431
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1620766785207	geckodriver	INFO	Listening on 127.0.0.1:65154
+1620766788240	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofileAxeo0K"
+1620766788691	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620766791788	Marionette	INFO	Listening on port 65168
+1620766791914	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+JavaScript warning: https://tpc.googlesyndication.com/sadbundle/$csp%3Der3$/1474469543895105536/index.html#t=8479234239631117484&p=https%3A%2F%2F1be6be70b452ee1e795524f0402f1546.safeframe.googlesyndication.com, line 246: unreachable code after return statement
+JavaScript warning: https://tpc.googlesyndication.com/sadbundle/$csp%3Der3$/5882030311650361344/index.html#t=9164899318716857480&p=https%3A%2F%2F1be6be70b452ee1e795524f0402f1546.safeframe.googlesyndication.com, line 246: unreachable code after return statement
+JavaScript warning: https://tpc.googlesyndication.com/sadbundle/$csp%3Der3$/5882030311650361344/index.html#t=16066042985804448558&p=https%3A%2F%2F1be6be70b452ee1e795524f0402f1546.safeframe.googlesyndication.com, line 246: unreachable code after return statement
+1620776978404	Marionette	INFO	Stopped listening on port 65168
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1620830432990	geckodriver	INFO	Listening on 127.0.0.1:56205
+1620830436015	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofilen22MVi"
+1620830436475	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620830439182	Marionette	INFO	Listening on port 56215
+1620830439205	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620831826319	Marionette	INFO	Stopped listening on port 56215
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1620831828784	geckodriver	INFO	Listening on 127.0.0.1:57203
+1620831831814	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofileQup8PX"
+1620831832205	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620831834594	Marionette	INFO	Listening on port 57211
+1620831835012	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620832600356	Marionette	INFO	Stopped listening on port 57211
+1620832713689	geckodriver	INFO	Listening on 127.0.0.1:57955
+1620832716726	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofilebBsN0g"
+1620832717289	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620832720952	Marionette	INFO	Listening on port 57967
+1620832721030	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+JavaScript error: , line 0: uncaught exception: Object
+1620835602222	Marionette	INFO	Stopped listening on port 57967
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1620836371327	geckodriver	INFO	Listening on 127.0.0.1:60166
+1620836374371	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofileOj39sr"
+1620836374868	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620836377735	Marionette	INFO	Listening on port 60175
+1620836378054	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+JavaScript error: resource://devtools/client/jsonview/Sniffer.jsm, line 56: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsIChannel.contentType]
+1620838759578	Marionette	INFO	Stopped listening on port 60175
+1620855344533	geckodriver	INFO	Listening on 127.0.0.1:64163
+1620855347578	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\wolf-\\AppData\\Local\\Temp\\rust_mozprofilew7NIYq"
+1620855347985	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1620855350350	Marionette	INFO	Listening on port 64171
+1620855350751	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.chess.com/bundles/app/js/vue.dll.c8e80ff1.js, line 2: Error: Request aborted
+1620855528863	Marionette	INFO	Stopped listening on port 64171

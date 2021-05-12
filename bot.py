@@ -12,9 +12,9 @@ import os
 
 import random
 
-import pytesseract
 import pyautogui
 
+import keyboard
 import win32api, win32con
 
 from stockfishpy.stockfishpy import *
@@ -87,18 +87,19 @@ def get_user_color(driver):
             else:
                 dot += "."
 
+
     global alwaysPrint, pauseMaxTime, legit
     alwaysPrint = elem.text
     pattern = re.compile("(\d{1,2} \| \d{1,2})")
     gameModeTimes = re.findall('[0-9]+', pattern.search(elem.text).group())
     if int(gameModeTimes[0]) < 3:
-        pauseMaxTime = 6.0
+        pauseMaxTime = 13.0
     elif int(gameModeTimes[0]) < 5:
-        pauseMaxTime = 8.0
+        pauseMaxTime = 25.0
     elif int(gameModeTimes[0]) < 10:
-        pauseMaxTime = 14.0
+        pauseMaxTime = 50.0
     elif int(gameModeTimes[0]) >= 15:
-        pauseMaxTime = 30.0
+        pauseMaxTime = 90.0
     if not legit:
         pauseMaxTime = 0
     print(elem.text)
@@ -242,7 +243,12 @@ def run_game(driver, chessEngine, board):
         print(f"{alwaysPrint}\nMy Turn")
 
         print(f"Pause: {float_to_string(pauseTime, 2)}s", end="\r")
-        time.sleep(pauseTime)
+        rest = pauseTime - int(pauseTime)
+        for _ in range(int(pauseTime)):
+            if keyboard.is_pressed('s'):
+                break
+            time.sleep(1)   
+        time.sleep(rest)
         #print(f"My Move: {best_move}")
         #time.sleep(pauseTime)
         #print(board, best_move)
@@ -296,12 +302,11 @@ def getMoves(board, driver):
 def click(x, y):
     win32api.SetCursorPos((x,y))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
-    time.sleep(0.1)
+    time.sleep(random.uniform(0.01, 0.2))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
     
 def makeMove(board, best_move):
     #print(best_move)
-
     global movesCounter 
     global fields_Cords
     moveTmp = chess.Move.from_uci(best_move)
@@ -431,7 +436,7 @@ def restart():
             bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
             #cv.rectangle(screenimg, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)  
             cv.circle(screenimg, top_left, 5, color=(0,0,255))
-            cv.imshow('Result', screenimg)
+            #cv.imshow('Result', screenimg)
             #cv.imwrite("board_result.jpg", screenimg)
             click(top_left[0], top_left[1])
         else:
@@ -451,7 +456,10 @@ def main(driver, chessEngine, board, newBoard):
         time.sleep(0.5)
     global keepPlaying
     if keepPlaying:
-        time.sleep(8)
+        for _ in range(20):
+            if keyboard.is_pressed('q'):
+                quit()
+            time.sleep(1)
         restart()
     print()
     start(driver)
