@@ -1,6 +1,7 @@
 # Chess.com bot
 
-The bot plays on chess.com for you
+The bot plays on chess.com for you.
+
 It uses the Stockfish13 engine, webscraping and picture detection (opencv)
 
 if ```legit=True``` the random time for you moves:
