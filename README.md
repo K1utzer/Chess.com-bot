@@ -16,7 +16,7 @@ The first 6 moves will be without pause.
     - White always on the bottom
     - Always Promote to Queen
 
-![Board result](/coordinates_detection.jpg)
+![Board result](/coordinates_detection.png)
 Format: ![board_result](url)
 
 
