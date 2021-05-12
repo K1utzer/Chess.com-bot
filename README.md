@@ -8,7 +8,7 @@ if ```legit=True``` the random time for you moves:
     * < 5 minutes: pause: 0-25s
     * < 10 minutes: pause: 0-50s
     * < 15 minutes: pause: 0-90s
-    
+
 if ```legit=False``` the bot will take no pause
 
 The first 6 moves will be without pause.
@@ -51,8 +51,11 @@ python bot.py
 ## Statistic
 
 Winrate 100%, probably lower on higher ranks
+
 Banrate 100%, 2 Accounts - 2 Banned
 
 **The use from external software is forbidden on chess.com.**
+
 **I don't recommend using this bot, because you probably get banned.**
+
 **Use on own responsibility.**
