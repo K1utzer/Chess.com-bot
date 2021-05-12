@@ -31,6 +31,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 config = configparser.ConfigParser()
 config.read("config.cfg")
+stockfish_path_name = str(config.get("stockfish", "path_name"))
 username = str(config.get("chess.com", "username"))
 password = str(config.get("chess.com", "password"))
 legit = bool(config.get("settings", "legit"))
@@ -389,7 +390,8 @@ def startPage():
     login(driver)
     return driver
 def init():
-    chessEngine = Engine('./stockfish_13_win_x64_bmi2/stockfish_13_win_x64_bmi2.exe', param={'Threads': 10, 'Ponder': None})
+    global stockfish_path_name
+    chessEngine = Engine(stockfish_path_name, param={'Threads': 10, 'Ponder': None})
     board = chess.Board()
     return chessEngine, board
 def restart():

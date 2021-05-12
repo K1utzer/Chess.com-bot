@@ -1,0 +1,9 @@
+selenium
+opencv-python
+configparser
+chess
+numpy
+pyautogui
+keyboard
+stockfishpy
+pypiwin32
