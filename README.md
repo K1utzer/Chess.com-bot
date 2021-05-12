@@ -24,7 +24,7 @@ The first 6 moves will be without pause.
 ![Board result](/coordinates_detection.PNG)
 
 
-## Install
+## Install libaries
 
 ```
 pip install -r requirements.txt
@@ -44,7 +44,7 @@ You can skip the break by pressing 's'
 
 ## Play
 
-The browser (which opened) must be always visible on screen
+The browser (which automaticly opens) must be always visible on screen
 
 start bot:
 ```
