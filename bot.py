@@ -34,8 +34,8 @@ config.read("config.cfg")
 stockfish_path_name = str(config.get("stockfish", "path_name"))
 username = str(config.get("chess.com", "username"))
 password = str(config.get("chess.com", "password"))
-legit = bool(config.get("settings", "legit"))
-keepPlaying = bool(config.get("settings", "keepPlaying"))
+legit = config.get("settings", "legit")
+keepPlaying = config.get("settings", "keepPlaying")
 movesCounter = 0
 myturn = False
 fields_Cords = {}
@@ -89,20 +89,20 @@ def get_user_color(driver):
                 dot += "."
 
 
-    global alwaysPrint, pauseMaxTime, legit
+    global alwaysPrint, legit
     alwaysPrint = elem.text
     pattern = re.compile("(\d{1,2} \| \d{1,2})")
     gameModeTimes = re.findall('[0-9]+', pattern.search(elem.text).group())
-    if int(gameModeTimes[0]) < 3:
-        pauseMaxTime = 13.0
-    elif int(gameModeTimes[0]) < 5:
-        pauseMaxTime = 25.0
-    elif int(gameModeTimes[0]) < 10:
-        pauseMaxTime = 50.0
-    elif int(gameModeTimes[0]) >= 15:
-        pauseMaxTime = 90.0
-    if not legit:
-        pauseMaxTime = 0
+    if legit == "True":
+        global pauseMaxTime
+        if int(gameModeTimes[0]) < 3:
+            pauseMaxTime = 13.0
+        elif int(gameModeTimes[0]) < 5:
+            pauseMaxTime = 25.0
+        elif int(gameModeTimes[0]) < 10:
+            pauseMaxTime = 50.0
+        elif int(gameModeTimes[0]) >= 15:
+            pauseMaxTime = 90.0
     print(elem.text)
     players = re.findall(r'(\w+)\s\(\d+\)', elem.text)
 
@@ -457,7 +457,7 @@ def main(driver, chessEngine, board, newBoard):
     while run_game(driver, chessEngine, board):
         time.sleep(0.5)
     global keepPlaying
-    if keepPlaying:
+    if keepPlaying == "True":
         for _ in range(20):
             if keyboard.is_pressed('q'):
                 quit()

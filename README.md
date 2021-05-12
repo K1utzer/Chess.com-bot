@@ -10,7 +10,13 @@ if ```legit=True``` the random time for you moves:
     - < 15 minutes: pause: 0-90s
 if ```legit=False``` the bot will take no pause
 
-![Board result](/board_result.jpg)
+The first 6 moves will be without pause.
+
+**You have to do some settings on chess.com:**
+    - White always on the bottom
+    - Always Promote to Queen
+
+![Board result](/coordinates_detection.jpg)
 Format: ![board_result](url)
 
 
