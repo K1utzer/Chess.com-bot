@@ -18,8 +18,9 @@ The first 6 moves will be without pause.
     * Always Promote to Queen
     * language: english
 
+
+### Board detection:
 ![Board result](/coordinates_detection.PNG)
-Format: ![board_result](url)
 
 
 ## Install
