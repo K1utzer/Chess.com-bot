@@ -10,7 +10,7 @@ if ```legit=True``` the random time for you moves:
     - < 15 minutes: pause: 0-90s
 if ```legit=False``` the bot will take no pause
 
-![Board result](/board_result.png)
+![Board result](/board_result.jpg)
 Format: ![board_result](url)
 
 
