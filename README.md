@@ -45,6 +45,6 @@ python bot.py
 Winrate 100%, probably lower on higher ranks
 Banrate 100%, 2 Accounts - 2 Banned
 
-**The use from external software is forbidden on chess.com**
+**The use from external software is forbidden on chess.com.**
 **I don't recommend using this bot, because you probably get banned.**
 **Use on own responsibility.**
