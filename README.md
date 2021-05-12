@@ -4,19 +4,21 @@ The bot plays on chess.com for you
 It uses the Stockfish13 engine, webscraping and picture detection (opencv)
 
 if ```legit=True``` the random time for you moves:
-    - < 3 minutes: pause: 0-13s
-    - < 5 minutes: pause: 0-25s
-    - < 10 minutes: pause: 0-50s
-    - < 15 minutes: pause: 0-90s
+    * < 3 minutes: pause: 0-13s
+    * < 5 minutes: pause: 0-25s
+    * < 10 minutes: pause: 0-50s
+    * < 15 minutes: pause: 0-90s
+    
 if ```legit=False``` the bot will take no pause
 
 The first 6 moves will be without pause.
 
 **You have to do some settings on chess.com:**
-    - White always on the bottom
-    - Always Promote to Queen
+    * White always on the bottom
+    * Always Promote to Queen
+    * language: english
 
-![Board result](/coordinates_detection.png)
+![Board result](/coordinates_detection.PNG)
 Format: ![board_result](url)
 
 
@@ -33,10 +35,10 @@ You can skip the break by pressing 's'
 
 ## Config
 
-chess.com: username and passwort
-stockfish_path_name: the path to the stockfish .exe
-legit: the bot takes random pause to look legit
-keepPlaying: the bot will search for next game, if the recent is finished
+* chess.com: username and passwort
+* stockfish_path_name: the path to the stockfish .exe
+* legit: the bot takes random pause to look legit
+* keepPlaying: the bot will search for next game, if the recent is finished
 
 ## Play
 
