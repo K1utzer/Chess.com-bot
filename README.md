@@ -4,7 +4,7 @@ The bot plays on chess.com for you.
 
 It uses the Stockfish13 engine, webscraping and picture detection (opencv)
 
-[Youtube video] (https://youtu.be/PgrLoFBUYkU) where the bot is playing
+[Youtube video](https://youtu.be/PgrLoFBUYkU) where the bot is playing
 
 if ```legit=True``` the random time for you moves:
 
