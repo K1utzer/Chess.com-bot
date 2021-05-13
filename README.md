@@ -8,7 +8,7 @@ Download Stockfish engine [here](https://stockfishchess.org/)
 
 [Youtube video](https://youtu.be/PgrLoFBUYkU) where the bot is playing
 
-if ```legit=True``` the random time for you moves based on gamemode:
+if ```legit=True``` the random time for your moves based on gamemode:
 
 The first 6 moves will be without pause.
 
