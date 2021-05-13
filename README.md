@@ -61,7 +61,7 @@ python bot.py
 
 Winrate 100%, could be lower on higher ranks
 
-Banrate 100%, 2 Accounts - 2 Banned
+Banrate 100%, 2 Accounts - 2 Banned (in legit mode)
 
 **The use of external software is forbidden on chess.com.**
 
