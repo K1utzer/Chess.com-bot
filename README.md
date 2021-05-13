@@ -5,6 +5,9 @@ The bot plays on chess.com for you.
 It uses the Stockfish13 engine, webscraping and picture detection (opencv)
 
 if ```legit=True``` the random time for you moves:
+
+The first 6 moves will be without pause.
+
 * < 3 minutes: pause: 0-13s
 * < 5 minutes: pause: 0-25s
 * < 10 minutes: pause: 0-50s
@@ -12,7 +15,7 @@ if ```legit=True``` the random time for you moves:
 
 if ```legit=False``` the bot will take no pause
 
-The first 6 moves will be without pause.
+
 
 **You have to do some settings on chess.com:**
 * White always on the bottom
@@ -52,7 +55,7 @@ python bot.py
 ```
 ## Statistic
 
-Winrate 100%, probably lower on higher ranks
+Winrate 100%, could be lower on higher ranks
 
 Banrate 100%, 2 Accounts - 2 Banned
 
