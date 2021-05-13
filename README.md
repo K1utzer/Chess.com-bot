@@ -6,7 +6,7 @@ It uses the Stockfish13 engine, webscraping and picture detection (opencv)
 
 Download Stockfish engine [here](https://stockfishchess.org/)
 
-[Youtube video](https://youtu.be/PgrLoFBUYkU) where the bot is playing
+[Youtube video](https://youtu.be/17iM9LtQpU0) where the bot is playing
 
 if ```legit=True``` the random time for your moves based on gamemode:
 
