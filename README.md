@@ -44,9 +44,9 @@ You can skip the break by pressing 's'
 
 ## Config
 
-* chess.com: username and passwort
+* chess.com: username and password
 * stockfish_path_name: the path to the stockfish .exe
-* legit: the bot takes random pause to look legit
+* legit: the bot takes random pauses to look legit
 * keepPlaying: the bot will search for next game, if the recent is finished
 
 ## Play
