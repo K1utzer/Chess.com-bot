@@ -30,6 +30,8 @@ class Manager():
         self.keepPlaying = self.config.get("settings", "keepPlaying")
         self.myturn = False
         
+        #detect which color -> check if white figures at the bottom, if so -> WHITE
+        
 
 def pictureDetection(imgIn, imgToSearch):
     pass
