@@ -21,12 +21,21 @@ import win32con
 from stockfishpy.stockfishpy import *
 
 
-def init():
-    pass
+class Manager():
+    def __init__(self):
+        self.config = configparser.ConfigParser()
+        self.config.read("config.cfg")
+        self.stockfish_path_name = str(self.config.get("stockfish", "path"))
+        self.legit = self.config.get("settings", "legit")
+        self.keepPlaying = self.config.get("settings", "keepPlaying")
+        self.myturn = False
+        
 
 def pictureDetection(imgIn, imgToSearch):
     pass
-class Feld:
+    #return coordinates, field_length, field_width, board_width, board_length
+
+class Board:
     
     def __init__(self):
         board = chess.Board()
