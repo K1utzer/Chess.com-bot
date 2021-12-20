@@ -34,12 +34,33 @@ class Manager():
         self.board.height = 0
         #detect which color -> check if white figures at the bottom, if so -> WHITE
         
+        # gezogenes feld farbe weiß: R:248,G:247,B:105 grün: R:187,G:203,B:44 -> Zug erkennen von wo wohin
+        
+        if self.myturn:
+            self.myTurn()
+        else:
+            self.opponentTurn()
+        
+    def myTurn(self):
+        pass
+        
+    def opponentTurn(self):
+        pass
+        
         
 
 
 class ImageDet:
 
     def searchBoard(self, screenshot, board_layout):
+
+        """
+        Search board on screen, rescale if not found (10x times)
+
+        Returns:
+            [[(int),(int)], int, int , int, int]: Boad coordinates left, upper corner and right lower corner x and y,
+                                                single field height, single field width, board height, board width
+        """
         maxValue = 0
         dots = "."
         threshold = 0.65
@@ -64,20 +85,30 @@ class ImageDet:
         if maxValue >= threshold:
             print("Found board")
             return [max_loc, (int(max_loc[0]+board_w/8), int(max_loc[1]+board_h/8))], board_h/8, board_w/8,  board_h, board_w
+        
+        
+    def getUserColor(self):
+        
+        threshold = 0.65
+        return True or False
 
 class Board:
     
     def __init__(self):
+        
+        
         self.path = "figures/"
         self.imageDet = ImageDet()
         screenshot = pyautogui.screenshot()
         screenshot.save(f"{self.path}screen.png")
         screenshot = cv.imread(f"{self.path}screen.png", cv.IMREAD_UNCHANGED)
         
+        
         self.board_coordinates, self.field_height, self.field_width, self.board_height, self.board_width = self.imageDet.searchBoard(
             screenshot, cv.imread(f"{self.path}layout1.PNG"))
         
         self.field_Cords = self.field_cords(self.board_coordinates[0], self.field_height, self.field_width, screenshot)
+        
         
         self.board = chess.Board()
         
