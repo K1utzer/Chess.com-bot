@@ -25,13 +25,16 @@ class Manager():
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read("config.cfg")
-        self.stockfish_path_name = str(self.config.get("stockfish", "path"))
+        stockfish_path_name = str(self.config.get("stockfish", "path"))
         self.legit = self.config.get("settings", "legit")
         self.keepPlaying = self.config.get("settings", "keepPlaying")
         self.myturn = False
         self.path = "figures/"
         self.board_width = 0
-        self.board.height = 0
+        self.board_height = 0
+        self.chessEngine = Engine(stockfish_path_name, param={
+                            'Threads': 10, 'Ponder': None})
+        self.board = Board()
         #detect which color -> check if white figures at the bottom, if so -> WHITE
         
         # gezogenes feld farbe weiß: R:248,G:247,B:105 grün: R:187,G:203,B:44 -> Zug erkennen von wo wohin
@@ -42,13 +45,62 @@ class Manager():
             self.opponentTurn()
         
     def myTurn(self):
+        # get Stockfish move
+        # write in the python chess libary
+        # click the right coordinates
         pass
         
     def opponentTurn(self):
+        # get opponent move: wait if move detected
+        # write it in python chess libary
+        
         pass
         
         
+def get_best_move(chessEngine, board):
 
+    chessEngine.ucinewgame()
+    chessEngine.setposition(board.fen())
+
+    move = chessEngine.bestmove()
+    bestmove = move['bestmove']
+
+    return bestmove
+
+
+def makeMove(board, best_move):
+    #print(best_move)
+    global movesCounter
+    global fields_Cords
+    moveTmp = chess.Move.from_uci(best_move)
+    board.push(moveTmp)
+    print(f"My Move: {moveTmp}")
+    firstField = ""
+    secondField = ""
+    first = True
+    for c in best_move:
+        #print("c: "+str(c))
+        if first:
+            try:
+                tmp = int(c)
+                firstField = firstField+str(c)
+                first = False
+            except Exception:
+                firstField = firstField+str(c)
+        else:
+            try:
+                tmp = int(c)
+                secondField = secondField+str(c)
+                break
+            except Exception:
+                secondField = secondField+str(c)
+
+
+def click(x, y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(random.uniform(0.01, 0.2))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 class ImageDet:
 
