@@ -16,7 +16,7 @@ Download Stockfish engine [here](https://stockfishchess.org/) and add it to the 
 
 
 ### Board detection:
-![Board result](/coordinates_detection.PNG)
+![Board result](/board_detection.PNG)
 
 
 ## Install libaries
