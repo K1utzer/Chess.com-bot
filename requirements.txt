@@ -4,6 +4,7 @@ configparser
 chess
 numpy
 pyautogui
+pillow
 keyboard
 stockfishpy
 pypiwin32
