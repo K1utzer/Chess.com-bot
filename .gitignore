@@ -1,3 +1,4 @@
 *.log
 *.exe
 stockfish_path/sf13/
+stockfish_path/DS_Store/
