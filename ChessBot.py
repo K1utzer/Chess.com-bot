@@ -42,11 +42,15 @@ class Manager():
         # dark figures: [82 83 86], white: 248, 248, 248
 
         # gezogenes feld farbe weiß: R:248,G:247,B:105 grün: R:187,G:203,B:44 -> Zug erkennen von wo wohin
+        move = ""
         while self.game_running:
+            if self.board.getBoard().is_checkmate():
+                print("Game won!" if not self.myturn else "Game lost!")
+                exit()
             if self.myturn:
-                self.botTurn()
+                move = self.botTurn()
             else:
-                self.opponentTurn()
+                self.opponentTurn(move)
         
     def botTurn(self):
         # get Stockfish move
@@ -62,52 +66,59 @@ class Manager():
         time.sleep(random.uniform(0.1, 0.8))
         self.click(fields_Cords[secondField][0], fields_Cords[secondField][1])
         self.myturn = False
+        return best_move
 
         
-    def opponentTurn(self):
+    def opponentTurn(self, botMove):
+        if botMove == None:
+            botMove = ""
         # get opponent move: wait if move detected
         print("Waiting for opponent move", end="\r")
-        fmove = ""
-        smove = ""
-        opponentMoved = False
+        fmove = False
+        smove = False
+        #opponentMoved = False
         screenshot = pyautogui.screenshot()
         screenshot.save("pictures/turn_screen.png")
         screen = cv.imread("pictures/turn_screen.png")
         field_w = self.board.getFieldWidth()
-        #field_h = self.board.getFieldHeight
+        field_h = self.board.getFieldHeight()
         field_Cords = self.board.getFieldCords()
         for field in field_Cords:
             x = field_Cords[field][0]
             y = field_Cords[field][1]
-            x2 = int(x-(field_w/2)+10)
-            if (screen[y, x2][0] <= 110 and
-                screen[y, x2][1] >= 240 and
-                screen[y, x2][2] >= 240):
-                yellow_white = [screen[y, x2][0], screen[y, x2][1], screen[y, x2][2]]
+            x2 = int(x+(field_w/2)-10)
+            y2 = int(y-(field_h/2)+10)
+            if (screen[y2, x2][0] <= 115 and
+                screen[y2, x2][1] >= 235 and
+                screen[y2, x2][2] >= 235):
+                yellow_white = [screen[y2, x2][0], screen[y2, x2][1], screen[y2, x2][2]]
                 if list(screen[y+10, x]) == yellow_white:
                     fmove = field
                 else:
                     smove = field
-                    opponentMoved = True
-            if (screen[y, x2][0] <= 50 and
-                screen[y, x2][0] >= 38 and
-                   screen[y, x2][1] <= 210 and
-                screen[y, x2][1] >= 198 and
-                   screen[y, x2][2] <= 195 and 
-                    screen[y, x2][2] >= 180):
-                yellow_white = [screen[y, x2][0], screen[y, x2][1], screen[y, x2][2]]
-                if list(screen[y+10, x]) == yellow_white:
+                    
+            if (screen[y2, x2][0] <= 55 and
+                screen[y2, x2][0] >= 34 and
+                   screen[y2, x2][1] <= 215 and
+                screen[y2, x2][1] >= 193 and
+                   screen[y2, x2][2] <= 198 and 
+                    screen[y2, x2][2] >= 177):
+                yellow_green = [screen[y2, x2][0], screen[y2, x2][1], screen[y2, x2][2]]
+                if list(screen[y+10, x]) == yellow_green:
                     fmove = field
                 else:
                     smove = field
-                    opponentMoved = True
-        if opponentMoved:
+                    #opponentMoved = True
+        if fmove and smove and str(fmove+smove) not in botMove:
             try:
                 self.board.makeMove(f"{fmove}{smove}")
                 self.myturn = True
-                print(f"Opponent move: {fmove}{smove}")
+                print()
+                print(f"\nOpponent move: {fmove}{smove}")
+                print(self.board.getBoard())
             except ValueError:
-                pass
+                time.sleep(1)
+                return
 
         # write it in python chess libary
          # gezogenes feld farbe weiß: R:248,G:247,B:105 
@@ -130,7 +141,7 @@ class Manager():
         #board.push(moveTmp)
         self.board.makeMove(best_move)
 
-        print(f"My Move: {best_move}")
+        print(f"\nMy Move: {best_move}")
         print(self.board.getBoard())
         return best_move[:2], best_move[2:4]
 
@@ -231,6 +242,7 @@ class BoardControl:
 
     def makeMove(self, move):
         self.board.push_san(move)
+
     def field_cords(self, top_left, field_h, field_w, screenimg):
         
         bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
