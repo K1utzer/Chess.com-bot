@@ -21,6 +21,7 @@ import win32con
 from stockfishpy.stockfishpy import *
 
 
+
 class Manager():
     def __init__(self):
         self.config = configparser.ConfigParser()
@@ -33,146 +34,216 @@ class Manager():
         self.board_width = 0
         self.board_height = 0
         self.chessEngine = Engine(stockfish_path_name, param={
-                            'Threads': 10, 'Ponder': None})
-        self.board = Board()
+                            'Threads': 2, 'Ponder': None})
+        self.game_running = True
+        self.board = BoardControl()
+        self.myturn = self.board.getMyTurn()
         #detect which color -> check if white figures at the bottom, if so -> WHITE
-        
+        # dark figures: [82 83 86], white: 248, 248, 248
+
         # gezogenes feld farbe weiß: R:248,G:247,B:105 grün: R:187,G:203,B:44 -> Zug erkennen von wo wohin
+        while self.game_running:
+            if self.myturn:
+                self.botTurn()
+            else:
+                self.opponentTurn()
         
-        if self.myturn:
-            self.myTurn()
-        else:
-            self.opponentTurn()
-        
-    def myTurn(self):
+    def botTurn(self):
         # get Stockfish move
+        best_move = self.get_best_move(self.chessEngine)
+        #print(best_move)
         # write in the python chess libary
+        firstField, secondField = self.makeMove(best_move)
+        #print(firstField, secondField)
         # click the right coordinates
-        pass
+        #click()
+        fields_Cords = self.board.getFieldCords()
+        self.click(fields_Cords[firstField][0], fields_Cords[firstField][1])
+        time.sleep(random.uniform(0.1, 0.8))
+        self.click(fields_Cords[secondField][0], fields_Cords[secondField][1])
+        self.myturn = False
+
         
     def opponentTurn(self):
         # get opponent move: wait if move detected
+        print("Waiting for opponent move", end="\r")
+        fmove = ""
+        smove = ""
+        opponentMoved = False
+        screenshot = pyautogui.screenshot()
+        screenshot.save("pictures/turn_screen.png")
+        screen = cv.imread("pictures/turn_screen.png")
+        field_w = self.board.getFieldWidth()
+        #field_h = self.board.getFieldHeight
+        field_Cords = self.board.getFieldCords()
+        for field in field_Cords:
+            x = field_Cords[field][0]
+            y = field_Cords[field][1]
+            x2 = int(x-(field_w/2)+10)
+            if (screen[y, x2][0] <= 110 and
+                screen[y, x2][1] >= 240 and
+                screen[y, x2][2] >= 240):
+                yellow_white = [screen[y, x2][0], screen[y, x2][1], screen[y, x2][2]]
+                if list(screen[y+10, x]) == yellow_white:
+                    fmove = field
+                else:
+                    smove = field
+                    opponentMoved = True
+            if (screen[y, x2][0] <= 50 and
+                screen[y, x2][0] >= 38 and
+                   screen[y, x2][1] <= 210 and
+                screen[y, x2][1] >= 198 and
+                   screen[y, x2][2] <= 195 and 
+                    screen[y, x2][2] >= 180):
+                yellow_white = [screen[y, x2][0], screen[y, x2][1], screen[y, x2][2]]
+                if list(screen[y+10, x]) == yellow_white:
+                    fmove = field
+                else:
+                    smove = field
+                    opponentMoved = True
+        if opponentMoved:
+            try:
+                self.board.makeMove(f"{fmove}{smove}")
+                self.myturn = True
+                print(f"Opponent move: {fmove}{smove}")
+            except ValueError:
+                pass
+
         # write it in python chess libary
+         # gezogenes feld farbe weiß: R:248,G:247,B:105 
+         # grün: R:187,G:203,B:44 -> Zug erkennen von wo wohin
         
-        pass
+    def get_best_move(self, chessEngine):
+
+        chessEngine.ucinewgame()
+        chessEngine.setposition(self.board.getBoard().fen())
+
+        move = chessEngine.bestmove()
+        bestmove = move['bestmove']
+
+        return bestmove
+
+
+    def makeMove(self, best_move):
+        #print(best_move)
+        #moveTmp = chess.Move.from_uci(best_move)
+        #board.push(moveTmp)
+        self.board.makeMove(best_move)
+
+        print(f"My Move: {best_move}")
+        print(self.board.getBoard())
+        return best_move[:2], best_move[2:4]
+
+    def click(self, x, y):
+        win32api.SetCursorPos((x, y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+        time.sleep(random.uniform(0.01, 0.2))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+        #win32api.SetCursorPos(
+            #(random.uniform(1, 1080), random.uniform(1, 720)))
         
-        
-def get_best_move(chessEngine, board):
-
-    chessEngine.ucinewgame()
-    chessEngine.setposition(board.fen())
-
-    move = chessEngine.bestmove()
-    bestmove = move['bestmove']
-
-    return bestmove
-
-
-def makeMove(board, best_move):
-    #print(best_move)
-    global movesCounter
-    global fields_Cords
-    moveTmp = chess.Move.from_uci(best_move)
-    board.push(moveTmp)
-    print(f"My Move: {moveTmp}")
-    firstField = ""
-    secondField = ""
-    first = True
-    for c in best_move:
-        #print("c: "+str(c))
-        if first:
-            try:
-                tmp = int(c)
-                firstField = firstField+str(c)
-                first = False
-            except Exception:
-                firstField = firstField+str(c)
-        else:
-            try:
-                tmp = int(c)
-                secondField = secondField+str(c)
-                break
-            except Exception:
-                secondField = secondField+str(c)
-
-
-def click(x, y):
-    win32api.SetCursorPos((x, y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-    time.sleep(random.uniform(0.01, 0.2))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 class ImageDet:
 
-    def searchBoard(self, screenshot, board_layout):
+    def searchBoard(self, screenshot, board_layout1, board_layout2):
 
         """
-        Search board on screen, rescale if not found (10x times)
+        Search board on screen, rescale if not found (100x times)
 
         Returns:
             [[(int),(int)], int, int , int, int]: Boad coordinates left, upper corner and right lower corner x and y,
                                                 single field height, single field width, board height, board width
         """
-        maxValue = 0
+        maxValue1 = 0
+        maxValue2 = 0
         dots = "."
-        threshold = 0.65
+        threshold = 0.8 
         print("Searching board", end="\r")
-        for c in range(int(maxValue+10)):
+        for c in range(100):
             print(f"Searching board {dots*c}", end="\r")
-            board_result = cv.matchTemplate(
-                screenshot, board_layout, cv.TM_CCOEFF_NORMED)
+            board_result1 = cv.matchTemplate(
+                screenshot, board_layout1, cv.TM_CCOEFF_NORMED)
+            board_result2 = cv.matchTemplate(
+                screenshot, board_layout2, cv.TM_CCOEFF_NORMED)
         #cv.imshow('image', screenimg)
         #cv.imshow('image', board)
-            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(board_result)
-            if max_val > maxValue:
-                maxValue = max_val
-                maxLoc = max_loc
-                board_w = board_layout1.shape[1]
-                board_h = board_layout1.shape[0]
-                if maxValue >= threshold:
-                    break
-            width = int(board_layout.shape[1] * 90/100)
-            higth = int(board_layout.shape[0] * 90/100)
-            board_layout1 = cv.resize(board_layout, (width, higth))
-        if maxValue >= threshold:
-            print("Found board")
-            return [max_loc, (int(max_loc[0]+board_w/8), int(max_loc[1]+board_h/8))], board_h/8, board_w/8,  board_h, board_w
+            min_val1, max_val1, min_loc1, max_loc1 = cv.minMaxLoc(board_result1)
+            min_val2, max_val2, min_loc2, max_loc2 = cv.minMaxLoc(board_result2)
+            if max_val1 > maxValue1:
+                maxValue1 = max_val1
+                maxLoc1 = max_loc1
+                board_w1 = board_layout1.shape[1]
+                board_h1 = board_layout1.shape[0]
+            if max_val2 > maxValue2:
+                maxValue2 = max_val2
+                maxLoc2 = max_loc2
+                board_w2 = board_layout2.shape[1]
+                board_h2 = board_layout2.shape[0]
+            width1 = int(board_layout1.shape[1] * 99/100)
+            higth1 = int(board_layout1.shape[0] * 99/100)
+            width2 = int(board_layout2.shape[1] * 99/100)
+            higth2 = int(board_layout2.shape[0] * 99/100)
+            board_layout1 = cv.resize(board_layout1, (width1, higth1))
+            board_layout2 = cv.resize(board_layout2, (width2, higth2))
+            os.system("cls")
+            if maxValue1 >= threshold:
+                print("Board found")
+                return True, [max_loc1, (int(max_loc1[0]+board_w1/8), int(max_loc1[1]+board_h1/8))], board_h1/8, board_w1/8,  board_h1, board_w1
+            if maxValue2 >= threshold:
+                return False, [max_loc2, (int(max_loc2[0]+board_w2/8), int(max_loc2[1]+board_h2/8))], board_h2/8, board_w2/8,  board_h2, board_w2
+        exit()
         
-        
-    def getUserColor(self):
-        
-        threshold = 0.65
-        return True or False
 
-class Board:
+class BoardControl:
     
     def __init__(self):
         
-        
-        self.path = "figures/"
+        self.myTurn = True
+        self.path = "pictures/"
         self.imageDet = ImageDet()
         screenshot = pyautogui.screenshot()
         screenshot.save(f"{self.path}screen.png")
         screenshot = cv.imread(f"{self.path}screen.png", cv.IMREAD_UNCHANGED)
         
-        
-        self.board_coordinates, self.field_height, self.field_width, self.board_height, self.board_width = self.imageDet.searchBoard(
-            screenshot, cv.imread(f"{self.path}layout1.PNG"))
-        
-        self.field_Cords = self.field_cords(self.board_coordinates[0], self.field_height, self.field_width, screenshot)
-        
-        
+        try:
+            self.myTurn, self.board_coordinates, self.field_height, self.field_width, self.board_height, self.board_width = self.imageDet.searchBoard(
+                screenshot, cv.imread(f"{self.path}layout1.PNG"), cv.rotate(cv.imread(f"{self.path}layout1.PNG"), cv.ROTATE_180))
+        except TypeError as e:
+            print("Board not found!")
+            exit()
+            
+        self.fields_Cords = self.field_cords(self.board_coordinates[0], self.field_height, self.field_width, screenshot)
         self.board = chess.Board()
-        
+
+    def getMyTurn(self):
+        return self.myTurn
+
+    def getBoard(self):
+        return self.board  
+
+    def getFieldCords(self):
+        return self.fields_Cords
+
+    def getFieldWidth(self):
+        return self.field_width
+    def getFieldHeight(self):
+        return self.field_height
+
+    def makeMove(self, move):
+        self.board.push_san(move)
     def field_cords(self, top_left, field_h, field_w, screenimg):
         
+        bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
         start_X = top_left[0]
-        start_Y = top_left[1]
+        #start_Y = top_left[1]
         firstX = True
         firstY = True
         fields_Cords = {}
         abc = "abcdefgh"
         oneTwothree = "87654321"
+        if not self.myTurn:
+            oneTwothree = "12345678"
+            abc = "hgfedcba"
         for c in range(8):
             firstX = True
             if not firstY:
@@ -187,8 +258,8 @@ class Board:
                     tmp = list(top_left)
                     tmp[0] = int(tmp[0]+field_w)
                     top_left = tuple(tmp)
-                    bottom_right = (
-                        int(top_left[0]+field_w), int(top_left[1]+field_h))
+                    bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
+
                 else:
                     firstX = False
                 #fields_Cords.append([int(top_left[0] + ( field_w / 2 )), int( top_left[1] + ( field_h / 2 ))])
@@ -201,9 +272,12 @@ class Board:
             #print(key, c)
             cv.circle(screenimg, tuple(c), 5, color=(0, 0, 255))
             cv.putText(screenimg, str(key), tuple(
-                c), cv.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, color=(255, 255, 255))
+                c), cv.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, color=(142, 142, 142))
         #cv.imshow('Result', screenimg)
         cv.imwrite("board_result.jpg", screenimg)
         #cv.waitKey()
         #print(fields_Cords)
         return fields_Cords
+
+
+manager = Manager()
