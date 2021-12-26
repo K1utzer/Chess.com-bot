@@ -1,5 +1,0 @@
-
-2D Boolean Array which field is empty
-
-After Field scan set check which boolean changed:
-    True->False first field False->True second field where figure was moved to
