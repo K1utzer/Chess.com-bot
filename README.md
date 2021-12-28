@@ -10,9 +10,8 @@ Download Stockfish engine [here](https://stockfishchess.org/) and add it to the 
 
 
 
-**You have to do some settings on chess.com:**
+**Settings on chess.com:**
 * Always Promote to Queen
-* language: english
 
 
 ### Board detection:
