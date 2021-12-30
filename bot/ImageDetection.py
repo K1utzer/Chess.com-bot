@@ -19,7 +19,7 @@ class ImageDetection:
 
         maxValue1 = 0
         dots = "."
-        threshold = 0.8
+        threshold = 0.9
         print("Searching board", end="\r")
         for c in range(100):
             manager.progressBarUpdate(c)
@@ -56,7 +56,12 @@ class ImageDetection:
         abc = "abcdefgh"
         oneTwothree = "87654321"
         myturn = True
-        if screenimg[start_X, top_left[1]][0] > 200 and screenimg[start_X, top_left[1]][1] > 200 and screenimg[start_X, top_left[1]][2] > 200:
+        print(screenimg[top_left[1]+int(field_h/2-10), start_X][0], screenimg[top_left[1]+int(field_h/2-10),
+              start_X][1], screenimg[top_left[1]+int(field_h/2-10), start_X][2])
+        cv.circle(
+            screenimg, (start_X, top_left[1]+int(field_h/2-10)), 5, color=(35, 120, 255))
+        
+        if screenimg[top_left[1]+int(field_h/2-10), start_X][0] > 200 and screenimg[top_left[1]+int(field_h/2-10), start_X][1] > 200 and screenimg[top_left[1]+int(field_h/2-10), start_X][2] > 200:
             oneTwothree = "12345678"
             abc = "hgfedcba"
             myturn = False
@@ -96,5 +101,14 @@ class ImageDetection:
         screenimg = cv.imread("board_result.jpg")
         cv.imwrite("pictures/board_detection.png",
                    screenimg[start_Y:int(start_Y+(field_h*8)), start_X:int(start_X+(field_w*8))])
-        manager.show_image("pictures/board_detection.png")
+        #manager.show_image("pictures/board_detection.png")
         return fields_Cords, myturn
+
+    def saveResizedImag(self, img_path, x1, y1, x2, y2):
+        img = cv.imread(img_path)
+        cv.imwrite(img_path,
+                   img[y1:y2, x1:x2])
+
+    def loadImag(self, img_path):
+        return cv.imread(img_path)
+        
