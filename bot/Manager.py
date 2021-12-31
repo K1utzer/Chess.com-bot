@@ -89,6 +89,7 @@ class Manager(QObject):
     def bot_Turn(self, stockfish: StockfishManager, chessBoard):
         best_move = stockfish.get_best_move(chessBoard.getBoard())
         chessBoard.makeMove(best_move)
+        self.write_label.emit(f"Bot move: {best_move}")
         mouseContr = MouseControl()
         mouseContr.mousePos(
             self.field_Cords[best_move[:2]][0], self.field_Cords[best_move[:2]][1])
@@ -99,6 +100,8 @@ class Manager(QObject):
         self.myturn = False
 
     def opponent_Turn(self, bot_move, chessBoard):
+        if self.counter == 0:
+            self.write_label.emit(f"Opponent turn")
         self.counter += 2
         if self.counter > 98:
             self.counter = 2
@@ -147,6 +150,7 @@ class Manager(QObject):
                     self.myturn = True
                     print()
                     print(f"\nOpponent move: {fmove}{smove}")
+                    self.write_label.emit(f"Opponent move: {fmove}{smove}")
                     print(chessBoard.getBoard())
                     self.progress.emit(100)
                     self.counter = 0
