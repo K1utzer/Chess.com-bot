@@ -22,7 +22,7 @@ class ImageDetection:
         threshold = 0.9
         print("Searching board", end="\r")
         for c in range(100):
-            manager.progressBarUpdate(c)
+            manager.update_bar(c)
             print(f"Searching board {dots*c}", end="\r")
             board_result1 = cv.matchTemplate(
                 screenshot, board_layout1, cv.TM_CCOEFF_NORMED)
@@ -41,7 +41,7 @@ class ImageDetection:
                 print("Board found")
                 cv.imwrite("pictures/board_detection.png",
                            screenshot[maxLoc1[1]:int(maxLoc1[1]+board_h1), maxLoc1[0]:int(maxLoc1[0]+board_w1)])
-                manager.show_image("pictures/board_detection.png")
+                manager.update_image("pictures/board_detection.png")
                 return True, [maxLoc1, (int(maxLoc1[0]+board_w1/8), int(maxLoc1[1]+board_h1/8))], board_h1/8, board_w1/8,  board_h1, board_w1
 
 
@@ -56,12 +56,10 @@ class ImageDetection:
         abc = "abcdefgh"
         oneTwothree = "87654321"
         myturn = True
-        print(screenimg[top_left[1]+int(field_h/2-10), start_X][0], screenimg[top_left[1]+int(field_h/2-10),
-              start_X][1], screenimg[top_left[1]+int(field_h/2-10), start_X][2])
-        cv.circle(
-            screenimg, (start_X, top_left[1]+int(field_h/2-10)), 5, color=(35, 120, 255))
-        
-        if screenimg[top_left[1]+int(field_h/2-10), start_X][0] > 200 and screenimg[top_left[1]+int(field_h/2-10), start_X][1] > 200 and screenimg[top_left[1]+int(field_h/2-10), start_X][2] > 200:
+        #cv.circle(
+        #    screenimg, (start_X+int(field_w/2), top_left[1]+int(field_h-13)), 5, color=(35, 120, 255))
+        #cv.imwrite("test.png", screenimg)
+        if screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][0] > 200 and screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][1] > 200 and screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][2] > 200:
             oneTwothree = "12345678"
             abc = "hgfedcba"
             myturn = False
@@ -101,7 +99,7 @@ class ImageDetection:
         screenimg = cv.imread("board_result.jpg")
         cv.imwrite("pictures/board_detection.png",
                    screenimg[start_Y:int(start_Y+(field_h*8)), start_X:int(start_X+(field_w*8))])
-        #manager.show_image("pictures/board_detection.png")
+        manager.update_image("pictures/board_detection.png")
         return fields_Cords, myturn
 
     def saveResizedImag(self, img_path, x1, y1, x2, y2):
