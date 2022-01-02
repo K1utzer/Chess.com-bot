@@ -109,4 +109,13 @@ class ImageDetection:
 
     def loadImag(self, img_path):
         return cv.imread(img_path)
-        
+
+    def draw_circle_on_img(self, img_path, x, y):
+        img = cv.imread(img_path)
+        cv.circle(img, (x, y), 5, color=(0, 0, 255))
+        cv.imwrite(img_path, img)
+    def draw_rec_on_img(self, img_path, x1, y1, x2, y2):
+        img = cv.imread(img_path)
+        cv.rectangle(img, (x1, y1), (x2, y2), color=(
+        0, 0, 255), thickness=2, lineType=cv.LINE_4)
+        cv.imwrite(img_path, img)

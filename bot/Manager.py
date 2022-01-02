@@ -12,7 +12,6 @@ from .ImageDetection import ImageDetection
 from .MouseControl import MouseControl
 from .StockfishManager import StockfishManager
 
-import cv2 as cv
 
 
 class Manager(QObject):
@@ -27,21 +26,23 @@ class Manager(QObject):
     set_board_height = pyqtSignal(int)
     set_board_width = pyqtSignal(int)
 
+    board_found = pyqtSignal(bool)
 
     path = "pictures/"
     running = False
     config = Config()
     counter = 0
     moves_counter = 0
-
-    def __init__(self, board_coordinates = None, field_height = None, field_width = None, board_height = None, board_width = None):
+    auto_move = False
+    first_move = True
+    def __init__(self, auto_move = None, board_coordinates = None, field_height = None, field_width = None, board_height = None, board_width = None):
         super(Manager, self).__init__()
         self.board_coordinates = board_coordinates
         self.field_height = field_height
         self.field_width = field_width
         self.board_height = board_height
         self.board_width = board_width
-
+        self.auto_move = auto_move
 
     def run(self):
         self.started = True
@@ -54,7 +55,7 @@ class Manager(QObject):
         try:
             stockfish = StockfishManager(self.config.stockfish_path_name)
         except Exception:
-            self.write_label.emit("Stockfish path wrong")
+            self.write_label.emit("Stockfish path \nwrong")
             self.finished.emit()
         
         self.game_running = True
@@ -88,20 +89,96 @@ class Manager(QObject):
 
     def bot_Turn(self, stockfish: StockfishManager, chessBoard):
         best_move = stockfish.get_best_move(chessBoard.getBoard())
-        chessBoard.makeMove(best_move)
-        self.write_label.emit(f"Bot move: {best_move}")
-        mouseContr = MouseControl()
-        mouseContr.mousePos(
-            self.field_Cords[best_move[:2]][0], self.field_Cords[best_move[:2]][1])
-        mouseContr.mouseClick()
-        mouseContr.mousePos(
-            self.field_Cords[best_move[2:4]][0], self.field_Cords[best_move[2:4]][1])
-        mouseContr.mouseClick()
-        self.myturn = False
+        if self.auto_move:
+            chessBoard.makeMove(best_move)
+            self.write_label.emit(f"Bot move: {best_move}")
+            mouseContr = MouseControl()
+            mouseContr.mousePos(
+                self.field_Cords[best_move[:2]][0], self.field_Cords[best_move[:2]][1])
+            mouseContr.mouseClick()
+            mouseContr.mousePos(
+                self.field_Cords[best_move[2:4]][0], self.field_Cords[best_move[2:4]][1])
+            mouseContr.mouseClick()
+            self.myturn = False
+        else:
+            
+            if self.first_move:
+                self.write_label.emit(f"Best move: {best_move}")
+                imageDet = ImageDetection(self)
+                screenshot = pyautogui.screenshot()
+                screenshot.save(f"{self.path}turn_screen.png")
+                imageDet.draw_rec_on_img(
+                    "pictures/turn_screen.png",
+                    self.field_Cords[best_move[:2]][0]-int(self.field_width/2), 
+                    self.field_Cords[best_move[:2]][1]-int(self.field_height/2), 
+                    self.field_Cords[best_move[:2]][0]+int(self.field_width/2), 
+                    self.field_Cords[best_move[:2]][1]+int(self.field_height/2))
+                imageDet.draw_rec_on_img(
+                    "pictures/turn_screen.png",
+                    self.field_Cords[best_move[2:4]][0]-int(self.field_width/2), 
+                    self.field_Cords[best_move[2:4]][1]-int(self.field_height/2),
+                    self.field_Cords[best_move[2:4]][0]+int(self.field_width/2), 
+                    self.field_Cords[best_move[2:4]][1]+int(self.field_height/2))
+                imageDet.saveResizedImag(f"{self.path}turn_screen.png",
+                    self.board_coordinates[0][0], self.board_coordinates[0][1], self.board_coordinates[0][0]+self.board_width, self.board_coordinates[0][1]+self.board_height)
+                self.update_image("pictures/turn_screen.png")
+                self.first_move = False
+
+        screenshot = pyautogui.screenshot()
+        screenshot.save("pictures/turn_screen.png")
+        imagDet = ImageDetection(self)
+        screen = imagDet.loadImag("pictures/turn_screen.png")
+        fmove = False
+        smove = False
+        self.counter += 2
+        if self.counter > 98:
+            self.counter = 2
+        for field in self.field_Cords:
+
+            x = self.field_Cords[field][0]
+            y = self.field_Cords[field][1]
+            x2 = int(x+(self.field_width/2)-5)
+            y2 = int(y-(self.field_height/2)+10)
+
+            if (screen[y2, x2][0] <= 115 and
+                screen[y2, x2][1] >= 235 and
+                    screen[y2, x2][2] >= 235):
+                yellow_white = [screen[y2, x2][0],
+                                screen[y2, x2][1], screen[y2, x2][2]]
+                if list(screen[y+int(self.field_height/2-13), x]) == yellow_white:
+                    fmove = field
+                else:
+                    smove = field
+            if (screen[y2, x2][0] <= 55 and
+                screen[y2, x2][0] >= 34 and
+                screen[y2, x2][1] <= 215 and
+                screen[y2, x2][1] >= 193 and
+                screen[y2, x2][2] <= 198 and
+                    screen[y2, x2][2] >= 177):
+                yellow_green = [screen[y2, x2][0],
+                                screen[y2, x2][1], screen[y2, x2][2]]
+                if list(screen[y+int(self.field_height/2-13), x]) == yellow_green:
+                    fmove = field
+                else:
+                    smove = field
+            if fmove and smove:
+                try:
+
+                    chessBoard.makeMove(f"{fmove}{smove}")
+                    self.myturn = False
+                    print()
+                    print(f"\Player move: {fmove}{smove}")
+                    self.write_label.emit(f"Player move: \n{fmove}{smove}")
+                    print(chessBoard.getBoard())
+                    self.progress.emit(100)
+                    self.counter = 0
+                    self.first_move = True
+                except ValueError:
+                    return
 
     def opponent_Turn(self, bot_move, chessBoard):
         if self.counter == 0:
-            self.write_label.emit(f"Opponent turn")
+            self.write_label.emit(f"Waiting for\nOpponent move")
         self.counter += 2
         if self.counter > 98:
             self.counter = 2
@@ -150,7 +227,7 @@ class Manager(QObject):
                     self.myturn = True
                     print()
                     print(f"\nOpponent move: {fmove}{smove}")
-                    self.write_label.emit(f"Opponent move: {fmove}{smove}")
+                    self.write_label.emit(f"Opponent move: \n{fmove}{smove}")
                     print(chessBoard.getBoard())
                     self.progress.emit(100)
                     self.counter = 0
@@ -189,7 +266,9 @@ class Manager(QObject):
 
         if not boardFound:
             self.write_label.emit("Board not found")
+            self.board_found.emit(False)
         else:
+            self.board_found.emit(True)
             self.write_label.emit("")
         self.finished.emit()
             
@@ -207,7 +286,6 @@ class GUI(QMainWindow):
 
         self.manager = Manager()
         self.started = False
-
         uic.loadUi("gui/main.ui", self)
 
         self.show()
@@ -221,49 +299,59 @@ class GUI(QMainWindow):
 
 
     def start_bot(self):
-        self.set_label_text("")
-        self.b_Settings.setEnabled(False)
-        self.b_start.setEnabled(False)
-        self.b_detect.setEnabled(False)
-        self.thread = QThread()
-        self.manager = Manager(self.boardCoordinates, self.fieldHeight, self.fieldWidth, self.boardHeight, self.boardWidth)
-        self.manager.moveToThread(self.thread)
-        self.thread.started.connect(self.manager.run)
-        self.manager.finished.connect(self.thread.quit)
+        if not self.started:
+            self.started = True
+            self.set_label_text("")
+            self.b_Settings.setEnabled(False)
+            #self.b_start.setEnabled(False)
+            self.b_start.setText("Stop bot")
+            self.b_detect.setEnabled(False)
+            self.box_automove.setEnabled(False)
+            self.thread = QThread()
+            self.manager = Manager(self.checkbox_automove_isChecked(), self.boardCoordinates, self.fieldHeight, self.fieldWidth, self.boardHeight, self.boardWidth)
+            self.manager.moveToThread(self.thread)
+            self.thread.started.connect(self.manager.run)
+            self.manager.finished.connect(self.thread.quit)
 
-        self.manager.finished.connect(self.manager.deleteLater)
-        self.manager.progress.connect(self.manager.deleteLater)
-        self.manager.write_label.connect(self.manager.deleteLater)
-        self.manager.show_image.connect(self.manager.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
+            self.manager.finished.connect(self.manager.deleteLater)
+            self.manager.progress.connect(self.manager.deleteLater)
+            self.manager.write_label.connect(self.manager.deleteLater)
+            self.manager.show_image.connect(self.manager.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
 
-        self.manager.write_label.connect(self.set_label_text)
-        self.manager.progress.connect(self.progressBarUpdate)
-        
-        self.manager.show_image.connect(self.show_image)
-        
-        
-        self.thread.start()
+            self.manager.write_label.connect(self.set_label_text)
+            self.manager.progress.connect(self.progressBarUpdate)
+            
+            self.manager.show_image.connect(self.show_image)
+            
+            
+            self.thread.start()
 
 
 
-        self.thread.finished.connect(
-            lambda: self.set_label_text("Game finished")
-        )
-        self.thread.finished.connect(
-            lambda: self.b_detect.setEnabled(True)
-        )
+            self.thread.finished.connect(
+                lambda: self.set_label_text("Game finished")
+            )
+            self.thread.finished.connect(
+                lambda: self.b_detect.setEnabled(True)
+            )
 
-        self.thread.finished.connect(
-            lambda: self.b_Settings.setEnabled(True)
+            self.thread.finished.connect(
+                lambda: self.b_Settings.setEnabled(True)
 
-        )
-        self.thread.finished.connect(
-            lambda: self.b_start.setEnabled(True)
+            )
+            self.thread.finished.connect(
+                lambda: self.b_start.setText("Start bot")
 
-        )
+            )
+            self.thread.finished.connect(
+                lambda: self.box_automove.isEnabled(True)
+            )
+            #TODO thread terminiaten von innen, also schaut regelmäßig nach draußen in haputthread ob stopbutton gedrückt wurde und beendet dann von innen
 
-        
+    def board_found(self, found):
+        if found:
+            self.b_start.setEnabled(True)
 
     def detect_board(self):
         self.b_detect.setEnabled(False)
@@ -289,12 +377,9 @@ class GUI(QMainWindow):
         self.manager.set_field_width.connect(self.set_fieldWidth)
         self.manager.set_board_height.connect(self.set_boardHeight)
         self.manager.set_board_width.connect(self.set_boardWidth)
+        self.manager.board_found.connect(self.board_found)
         
         self.thread.start()
-
-        self.thread.finished.connect(
-            lambda: self.b_start.setEnabled(True)
-        )
         self.thread.finished.connect(
             lambda: self.progressBarUpdate(0)
         )
