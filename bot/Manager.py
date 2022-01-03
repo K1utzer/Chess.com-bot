@@ -21,6 +21,8 @@ class Manager(QObject):
     show_image = pyqtSignal(str)
     write_label = pyqtSignal(str)
 
+    auto_move_update = pyqtSignal()
+
     set_board_coordinates = pyqtSignal(list)
     set_field_height = pyqtSignal(int)
     set_field_width = pyqtSignal(int)
@@ -41,6 +43,7 @@ class Manager(QObject):
     def __init__(self, parant, auto_move = None, board_coordinates = None, field_height = None, field_width = None, board_height = None, board_width = None):
         super(Manager, self).__init__()
         parant.stopped.connect(self.stopped)
+        parant.automatic_move_change.connect(self.checkbox_change)
         
         self.board_coordinates = board_coordinates
         self.field_height = field_height
@@ -63,7 +66,8 @@ class Manager(QObject):
             stockfish = StockfishManager(self.config.stockfish_path_name)
         except Exception:
             self.write_label.emit("Stockfish path \nwrong")
-            self.stopped.emit()
+            #self.stopped_bot.emit()
+            self.game_stopped = True
         bot_move = None
         #counter = 0
         while self.game_running and not self.game_stopped:
@@ -89,6 +93,7 @@ class Manager(QObject):
                     self.board_coordinates[0][0], self.board_coordinates[0][1], self.board_coordinates[0][0]+self.board_width, self.board_coordinates[0][1]+self.board_height)
                 self.update_image(f"{self.path}turn_screen.png")
                 self.moves_counter += 1
+            self.auto_move_update.emit()
         
         
 
@@ -281,6 +286,11 @@ class Manager(QObject):
         self.progress.emit(counter)
     def update_image(self, img_path):
         self.show_image.emit(img_path)
+
+    def checkbox_change(self, checked):
+        if not self.auto_move == checked:
+            self.counter = 0
+        self.auto_move = checked
         
     def stopped(self):
         self.stopped_bot.emit()
@@ -289,6 +299,7 @@ class Manager(QObject):
 class GUI(QMainWindow):
 
     stopped = pyqtSignal()
+    automatic_move_change = pyqtSignal(bool)
 
     def __init__(self):
         super(GUI, self).__init__()
@@ -321,7 +332,7 @@ class GUI(QMainWindow):
             #self.b_start.setEnabled(False)
             self.b_start.setText("Stop bot")
             self.b_detect.setEnabled(False)
-            self.box_automove.setEnabled(False)
+            #self.box_automove.setEnabled(False)
             self.manager = Manager(self, self.checkbox_automove_isChecked(
             ), self.boardCoordinates, self.fieldHeight, self.fieldWidth, self.boardHeight, self.boardWidth)
             self.thread2 = QThread()
@@ -340,6 +351,8 @@ class GUI(QMainWindow):
             self.manager.write_label.connect(self.set_label_text)
             self.manager.progress.connect(self.progressBarUpdate)
             self.manager.show_image.connect(self.show_image)
+
+            self.manager.auto_move_update.connect(self.sent_checkbox_isChecked)
             
                     
             self.thread2.start()
@@ -445,7 +458,8 @@ class GUI(QMainWindow):
     def clear_image(self):
         self.label_image.clear()
     
-
+    def sent_checkbox_isChecked(self):
+        self.automatic_move_change.emit(self.checkbox_automove_isChecked())
 
     def checkbox_automove_isChecked(self):
         return self.box_automove.isChecked()

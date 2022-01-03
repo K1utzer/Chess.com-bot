@@ -3,11 +3,8 @@ import chess.engine
 class StockfishManager:
 
     def __init__(self, stockfish_path_name):
-        try:
-            
-            self.engine = chess.engine.SimpleEngine.popen_uci(stockfish_path_name)
-        except Exception as e:
-            print(e)
+
+        self.engine = chess.engine.SimpleEngine.popen_uci(stockfish_path_name)
 
     def get_best_move(self, board):
 
