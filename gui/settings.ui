@@ -27,7 +27,7 @@
      <string>OK</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label1">
+   <widget class="QLabel" name="label_stockfishpath">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -45,12 +45,12 @@
      <string>Stockfish engine path</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEdit_stockfishpath">
     <property name="geometry">
      <rect>
       <x>210</x>
       <y>120</y>
-      <width>421</width>
+      <width>581</width>
       <height>22</height>
      </rect>
     </property>
@@ -66,6 +66,42 @@
     </property>
     <property name="text">
      <string>Cancel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_current_stockfishpath">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>80</y>
+      <width>581</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Stockfish engine path</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_stockfishpath_current_display">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>201</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Current path:</string>
     </property>
    </widget>
   </widget>
