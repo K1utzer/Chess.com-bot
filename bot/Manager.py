@@ -426,6 +426,16 @@ class GUI(QMainWindow):
         self.thread.finished.connect(
             lambda: self.b_detect.setEnabled(True)
         )
+        self.manager.finished.connect(
+            lambda: self.label_board_found.setText("Board detected")
+        )
+        self.manager.finished.connect(
+            lambda: self.label_board_found.setStyleSheet("color: green")
+        )
+
+        self.manager.finished.connect(
+            lambda: self.b_checkDetection.setEnabled(True)
+        )
 
     def set_boardCoordinates(self, board_coordinates):
         self.boardCoordinates = board_coordinates
