@@ -76,7 +76,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>automatic move</string>
+     <string>auto mouse control</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="progressBar">
