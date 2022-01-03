@@ -2,7 +2,7 @@ import time
 from threading import Thread
 
 import pyautogui
-from PyQt5 import QtGui, uic
+from PyQt5 import QtGui, uic, QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
@@ -16,6 +16,7 @@ from .StockfishManager import StockfishManager
 
 class Manager(QObject):
     finished = pyqtSignal()
+    stopped_bot = pyqtSignal()
     progress = pyqtSignal(int)
     show_image = pyqtSignal(str)
     write_label = pyqtSignal(str)
@@ -29,14 +30,18 @@ class Manager(QObject):
     board_found = pyqtSignal(bool)
 
     path = "pictures/"
-    running = False
+    game_running = True
     config = Config()
     counter = 0
     moves_counter = 0
     auto_move = False
     first_move = True
-    def __init__(self, auto_move = None, board_coordinates = None, field_height = None, field_width = None, board_height = None, board_width = None):
+    game_stopped = False
+    
+    def __init__(self, parant, auto_move = None, board_coordinates = None, field_height = None, field_width = None, board_height = None, board_width = None):
         super(Manager, self).__init__()
+        parant.stopped.connect(self.stopped)
+        
         self.board_coordinates = board_coordinates
         self.field_height = field_height
         self.field_width = field_width
@@ -45,23 +50,23 @@ class Manager(QObject):
         self.auto_move = auto_move
 
     def run(self):
-        self.started = True
+        
         screenshot = pyautogui.screenshot()
         screenshot.save(f"{self.path}screen.png")
         imageDet = ImageDetection(self)
+        
         self.field_Cords, self.myturn = imageDet.calculate_field_cords(
             self.board_coordinates[0], self.field_height, self.field_width, self)
         chessBoard = ChessBoard()
+
         try:
             stockfish = StockfishManager(self.config.stockfish_path_name)
         except Exception:
             self.write_label.emit("Stockfish path \nwrong")
-            self.finished.emit()
-        
-        self.game_running = True
+            self.stopped.emit()
         bot_move = None
         #counter = 0
-        while self.game_running:
+        while self.game_running and not self.game_stopped:
             #counter += 1
             tmp_turn = self.myturn
             #self.progress.emit(counter)
@@ -84,7 +89,7 @@ class Manager(QObject):
                     self.board_coordinates[0][0], self.board_coordinates[0][1], self.board_coordinates[0][0]+self.board_width, self.board_coordinates[0][1]+self.board_height)
                 self.update_image(f"{self.path}turn_screen.png")
                 self.moves_counter += 1
-            
+        
         
 
     def bot_Turn(self, stockfish: StockfishManager, chessBoard):
@@ -254,7 +259,7 @@ class Manager(QObject):
 
         try:
             boardFound, self.board_coordinates, self.field_height, self.field_width, self.board_height, self.board_width = imageDet.searchBoard(
-                f"{self.path}screen.png", self)
+                f"{self.path}screen.png")
             self.set_board_coordinates.emit(self.board_coordinates)
             self.set_field_height.emit(self.field_height)
             self.set_field_width.emit(self.field_width)
@@ -276,21 +281,28 @@ class Manager(QObject):
         self.progress.emit(counter)
     def update_image(self, img_path):
         self.show_image.emit(img_path)
+        
+    def stopped(self):
+        self.stopped_bot.emit()
+        self.game_stopped = True
 
 class GUI(QMainWindow):
+
+    stopped = pyqtSignal()
 
     def __init__(self):
         super(GUI, self).__init__()
 
         self.games_played = 0
 
-        self.manager = Manager()
+        #self.manager = Manager()
         self.started = False
         uic.loadUi("gui/main.ui", self)
 
         self.show()
         self.set_label_text("")
         self.b_start.setEnabled(False)
+        
         self.b_start.clicked.connect(self.start_bot)
         self.b_quit.clicked.connect(self.quit_programm)
         self.b_detect.clicked.connect(self.detect_board)
@@ -300,55 +312,70 @@ class GUI(QMainWindow):
 
     def start_bot(self):
         if not self.started:
-            self.started = True
+            if self.games_played > 1:
+                time.sleep(2)
+            self.games_played += 1
             self.set_label_text("")
+            self.started = True
             self.b_Settings.setEnabled(False)
             #self.b_start.setEnabled(False)
             self.b_start.setText("Stop bot")
             self.b_detect.setEnabled(False)
             self.box_automove.setEnabled(False)
-            self.thread = QThread()
-            self.manager = Manager(self.checkbox_automove_isChecked(), self.boardCoordinates, self.fieldHeight, self.fieldWidth, self.boardHeight, self.boardWidth)
-            self.manager.moveToThread(self.thread)
-            self.thread.started.connect(self.manager.run)
-            self.manager.finished.connect(self.thread.quit)
-
+            self.manager = Manager(self, self.checkbox_automove_isChecked(
+            ), self.boardCoordinates, self.fieldHeight, self.fieldWidth, self.boardHeight, self.boardWidth)
+            self.thread2 = QThread()
+            
+            self.manager.moveToThread(self.thread2)
+            
+            self.thread2.started.connect(self.manager.run)
+            self.manager.finished.connect(self.thread2.quit)
+            self.manager.stopped_bot.connect(self.thread2.quit)
             self.manager.finished.connect(self.manager.deleteLater)
             self.manager.progress.connect(self.manager.deleteLater)
             self.manager.write_label.connect(self.manager.deleteLater)
             self.manager.show_image.connect(self.manager.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
+            self.thread2.finished.connect(self.thread2.deleteLater)
 
             self.manager.write_label.connect(self.set_label_text)
             self.manager.progress.connect(self.progressBarUpdate)
-            
             self.manager.show_image.connect(self.show_image)
             
-            
-            self.thread.start()
+                    
+            self.thread2.start()
 
-
-
-            self.thread.finished.connect(
+            self.thread2.finished.connect(
+                lambda: self.set_label_text("")
+            )
+            self.thread2.finished.connect(
+                lambda: self.progressBarUpdate(0)
+            )
+            self.manager.finished.connect(
                 lambda: self.set_label_text("Game finished")
             )
-            self.thread.finished.connect(
+            
+            self.thread2.finished.connect(
                 lambda: self.b_detect.setEnabled(True)
             )
 
-            self.thread.finished.connect(
+            self.thread2.finished.connect(
                 lambda: self.b_Settings.setEnabled(True)
-
             )
-            self.thread.finished.connect(
+            
+            self.thread2.finished.connect(
                 lambda: self.b_start.setText("Start bot")
-
             )
-            self.thread.finished.connect(
-                lambda: self.box_automove.isEnabled(True)
+            self.manager.stopped_bot.connect(
+                lambda: self.show_image('pictures/board_detection.png')
             )
-            #TODO thread terminiaten von innen, also schaut regelmäßig nach draußen in haputthread ob stopbutton gedrückt wurde und beendet dann von innen
+            
 
+
+        else:
+            self.stopped.emit()
+            self.started = False
+        
+            
     def board_found(self, found):
         if found:
             self.b_start.setEnabled(True)
@@ -356,7 +383,7 @@ class GUI(QMainWindow):
     def detect_board(self):
         self.b_detect.setEnabled(False)
         self.thread = QThread()
-        self.manager = Manager()
+        self.manager = Manager(self)
         self.manager.moveToThread(self.thread)
         self.thread.started.connect(self.manager.detect_board)
         self.manager.finished.connect(self.thread.quit)
@@ -400,6 +427,7 @@ class GUI(QMainWindow):
 
     def show_settings(self):
         pass
+        #TODO
 
     def quit_programm(self):
         exit()
@@ -411,7 +439,11 @@ class GUI(QMainWindow):
             self.label_image.setPixmap(pixmap)
             self.label_image.show()
         except Exception:
+            #self.set_label_text("Error: #410")
+            #TODO
             pass
+    def clear_image(self):
+        self.label_image.clear()
     
 
 
@@ -430,9 +462,12 @@ class GUI(QMainWindow):
 
 
 def main():
-    app = QApplication([])
-    window = GUI()
-    app.exec_()
+    try:
+        app = QApplication([])
+        window = GUI()
+        app.exec_()
+    except Exception as e:
+        print(e)
 
     
 

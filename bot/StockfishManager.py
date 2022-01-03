@@ -1,12 +1,15 @@
-from stockfishpy.stockfishpy import *
+import chess.engine
 
 class StockfishManager:
 
     def __init__(self, stockfish_path_name):
-        self.chessEngine = Engine(stockfish_path_name, param={
-            'Threads': 2, 'Ponder': None})
+        try:
+            
+            self.engine = chess.engine.SimpleEngine.popen_uci(stockfish_path_name)
+        except Exception as e:
+            print(e)
 
     def get_best_move(self, board):
-        self.chessEngine.ucinewgame()
-        self.chessEngine.setposition(board.fen())
-        return self.chessEngine.bestmove()['bestmove']
+
+        result = self.engine.play(board, chess.engine.Limit(time=0.1))
+        return str(result.move)
