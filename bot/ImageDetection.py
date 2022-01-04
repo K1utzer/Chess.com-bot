@@ -3,8 +3,9 @@ import cv2 as cv
 
 
 class ImageDetection:
-    def __init__(self, manager):
+    def __init__(self, manager, logger):
         self.manager = manager
+        self.logger = logger
 
     def searchBoard(self, screenshot_path):
         """
@@ -18,12 +19,12 @@ class ImageDetection:
         board_layout1 = cv.imread("pictures/layout1.PNG")
 
         maxValue1 = 0
-        dots = "."
+        #dots = "."
         threshold = 0.9
         print("Searching board", end="\r")
         for c in range(100):
             self.manager.update_bar(c)
-            print(f"Searching board {dots*c}", end="\r")
+            #print(f"Searching board {dots*c}", end="\r")
             board_result1 = cv.matchTemplate(
                 screenshot, board_layout1, cv.TM_CCOEFF_NORMED)
 
@@ -38,7 +39,7 @@ class ImageDetection:
             higth1 = int(board_layout1.shape[0] * 99/100)
             board_layout1 = cv.resize(board_layout1, (width1, higth1))
             if maxValue1 >= threshold:
-                print("Board found")
+                self.logger.info(f"Board detected")
                 cv.imwrite("pictures/board_detection.png",
                            screenshot[maxLoc1[1]:int(maxLoc1[1]+board_h1), maxLoc1[0]:int(maxLoc1[0]+board_w1)])
                 self.manager.update_image("pictures/board_detection.png")

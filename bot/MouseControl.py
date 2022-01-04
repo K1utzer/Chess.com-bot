@@ -3,13 +3,14 @@ import time
 
 class MouseControl:
 
+    def __init__(self, logger):
+        
+        self.logger = logger
     def mousePos(self, x, y):
-        try:
-            win32api.SetCursorPos((x, y))
-        except Exception as e:
-            print(e)
+        win32api.SetCursorPos((x, y))
+
 
     def mouseClick(self):
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-        time.sleep(0.2)
+        time.sleep(0.1)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
