@@ -42,7 +42,7 @@ Detect the board before you start a game on this page:
 Search for a game.
 When found, start the bot.
 
-It will show you the best moves for you by standard. You can check the "auto mouse control" checkbox if you want the bot to make your move.
+It will show the best moves by standard. You can check the "auto mouse control" checkbox if you want the bot to make your move.
 
 
 
