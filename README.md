@@ -4,9 +4,9 @@ The bot plays on chess.com for you.
 
 It uses the Stockfish13 engine and image detection (opencv)
 
-Download Stockfish engine [here](https://stockfishchess.org/), add it to the stockfish folder and put the filename in the config
+Download Stockfish engine at: https://stockfishchess.org/, add it to the stockfish folder and put the filename in the config
 
-
+[Video of the bot playing](https://youtu.be/IrRqvy0pPSw)
 
 ![](doc/bot_play.gif)
 
