@@ -97,8 +97,8 @@ class ImageDetection:
             cv.putText(screenimg, str(key), tuple(
                 c), cv.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, color=(142, 142, 142))
         #cv.imshow('Result', screenimg)
-        #cv.imwrite("pictures/board_detection.jpg", screenimg)
-        #screenimg = cv.imread("pictures/board_detection.jpg")
+        #cv.imwrite("pictures/board_result.jpg", screenimg)
+        #screenimg = cv.imread("pictures/board_result.jpg")
         cv.imwrite("pictures/board_detection.png",
                    screenimg[start_Y:int(start_Y+(field_h*8)), start_X:int(start_X+(field_w*8))])
         manager.update_image("pictures/board_detection.png")
