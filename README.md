@@ -7,17 +7,13 @@ It uses the Stockfish13 engine and image detection (opencv)
 Download Stockfish engine [here](https://stockfishchess.org/), add it to the stockfish folder and put the filename in the
 
 
-![bot playing](doc/bot play.gif)
 
-
+![](doc/bot_play.gif)
 
 
 **Settings on chess.com:**
 * Always Promote to Queen
 
-
-### Board detection:
-![Board result](/board_detection.PNG)
 
 
 ## Install libaries
@@ -41,7 +37,7 @@ python -m bot.py
 ```
 
 Detect the board before you start a game on this page:
-![Detect Board](doc/Detect_board.JPG)
+![Chess.com page](doc/Detect_board.JPG)
 
 Search for a game.
 When found, start the bot.
