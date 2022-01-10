@@ -7,12 +7,8 @@ It uses the Stockfish13 engine and image detection (opencv)
 Download Stockfish engine [here](https://stockfishchess.org/), add it to the stockfish folder and put the filename in the
 
 
-![bot playing](doc/bot_play.gif)
+![bot playing](doc/bot play.gif)
 
-
-
-
-[Youtube video](https://youtu.be/17iM9LtQpU0) of the bot is playing
 
 
 
