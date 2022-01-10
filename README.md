@@ -41,7 +41,7 @@ python -m bot.py
 ```
 
 Detect the board before you start a game on this page:
-![Detect Board](doc/Detect board.JPG)
+![Detect Board](doc/Detect_board.JPG)
 
 Search for a game.
 When found, start the bot.
