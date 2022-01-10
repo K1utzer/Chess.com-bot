@@ -6,5 +6,5 @@ class StockfishManager:
         self.engine = chess.engine.SimpleEngine.popen_uci(stockfish_path_name)
 
     def get_best_move(self, board):
-        return str(self.engine.play(board, chess.engine.Limit(time=0.1)).move)
+        return str(self.engine.play(board, chess.engine.Limit(time=0.5)).move)
         

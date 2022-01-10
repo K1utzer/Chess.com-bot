@@ -34,6 +34,7 @@ class Manager(QObject):
 
 
     path = "pictures/"
+    turn_img = f"{path}turn_screen.png"
     game_running = True
     config = Config()
     bar_update_counter = 0
@@ -59,7 +60,7 @@ class Manager(QObject):
     def run(self):
         
         screenshot = pyautogui.screenshot()
-        screenshot.save(f"{self.path}screen.png")
+        screenshot.save(self.turn_img)
         imageDet = ImageDetection(self, self.logger)
         
         self.field_Cords, self.myturn = imageDet.calculate_field_cords(
@@ -88,9 +89,8 @@ class Manager(QObject):
             else:
 
                 self.opponent_Turn(bot_move, chessBoard)
-            time.sleep(1)
             if not tmp_turn == self.myturn and self.game_running:
-                self.show_new_image(f"{self.path}turn_screen.png", imageDet)
+                self.show_new_image(self.turn_img, imageDet)
                 self.moves_counter += 1
             self.auto_move_update.emit()
         if self.game_stopped:
@@ -112,6 +112,7 @@ class Manager(QObject):
             self.logger.error(f"Failed to get stockfish best_move: {e}")
             
         if self.auto_move:
+            self.first_move = True
             chessBoard.makeMove(best_move)
             self.write_label.emit(f"Bot move: {best_move}")
 
@@ -127,100 +128,62 @@ class Manager(QObject):
                 self.logger.error(f"Mouse control failed: {e}")
                 
             self.myturn = False
+            return best_move
         else:
             
             if self.first_move:
                 self.write_label.emit(f"Best move: {best_move}")
                 imageDet = ImageDetection(self, self.logger)
                 screenshot = pyautogui.screenshot()
-                screenshot.save(f"{self.path}turn_screen.png")
+                screenshot.save(self.turn_img)
                 half_field_w = int(self.field_width/2)
                 half_hield_h = int(self.field_height/2)
                 imageDet.draw_rec_on_img(
-                    "pictures/turn_screen.png",
+                    self.turn_img,
                     self.field_Cords[best_move[:2]][0]-half_field_w,
                     self.field_Cords[best_move[:2]][1]-half_hield_h,
                     self.field_Cords[best_move[:2]][0]+half_field_w,
                     self.field_Cords[best_move[:2]][1]+half_hield_h)
                 imageDet.draw_rec_on_img(
-                    "pictures/turn_screen.png",
+                    self.turn_img,
                     self.field_Cords[best_move[2:4]][0]-half_field_w,
                     self.field_Cords[best_move[2:4]][1]-half_hield_h,
                     self.field_Cords[best_move[2:4]][0]+half_field_w,
                     self.field_Cords[best_move[2:4]][1]+half_hield_h)
-                imageDet.saveResizedImag(f"{self.path}turn_screen.png",
+                imageDet.saveResizedImag(self.turn_img,
                     self.board_coordinates[0][0], self.board_coordinates[0][1], self.board_coordinates[0][0]+self.board_width, self.board_coordinates[0][1]+self.board_height)
-                self.update_image("pictures/turn_screen.png")
+                self.update_image(self.turn_img)
                 self.first_move = False
 
-        screenshot = pyautogui.screenshot()
-        screenshot.save("pictures/turn_screen.png")
-        imagDet = ImageDetection(self)
-        screen = imagDet.loadImag("pictures/turn_screen.png")
-        fmove = False
-        smove = False
-        self.bar_update_counter += 2
-        if self.bar_update_counter > 98:
-            self.bar_update_counter = 2
-        for field in self.field_Cords:
 
-            x = self.field_Cords[field][0]
-            y = self.field_Cords[field][1]
-            x2 = int(x+(self.field_width/2)-5)
-            y2 = int(y-(self.field_height/2)+10)
-
-            if (screen[y2, x2][0] <= 115 and
-                screen[y2, x2][1] >= 235 and
-                    screen[y2, x2][2] >= 235):
-                yellow_white = [screen[y2, x2][0],
-                                screen[y2, x2][1], screen[y2, x2][2]]
-                if list(screen[y+int(self.field_height/2-13), x]) == yellow_white:
-                    fmove = field
-                else:
-                    smove = field
-            if (screen[y2, x2][0] <= 55 and
-                screen[y2, x2][0] >= 34 and
-                screen[y2, x2][1] <= 215 and
-                screen[y2, x2][1] >= 193 and
-                screen[y2, x2][2] <= 198 and
-                    screen[y2, x2][2] >= 177):
-                yellow_green = [screen[y2, x2][0],
-                                screen[y2, x2][1], screen[y2, x2][2]]
-                if list(screen[y+int(self.field_height/2-13), x]) == yellow_green:
-                    fmove = field
-                else:
-                    smove = field
+            self.bar_update_counter += 2
+            if self.bar_update_counter > 98:
+                self.bar_update_counter = 2
+                
+            fmove, smove = self.detect_move()
+            
             if fmove and smove:
                 try:
-
                     chessBoard.makeMove(f"{fmove}{smove}")
                     self.myturn = False
-                    #print()
-                    #print(f"\Player move: {fmove}{smove}")
                     self.write_label.emit(f"Player move: \n{fmove}{smove}")
-                    print(chessBoard.getBoard())
                     self.progress.emit(100)
                     self.bar_update_counter = 0
                     self.first_move = True
-                except ValueError:
-                    return
+                    return str(f"{fmove}{smove}")
+                except ValueError as e:
+                    self.logger.warning(f"Something wrong with your move: {e}")
+                
+                            
 
-    def opponent_Turn(self, bot_move, chessBoard):
-        if self.bar_update_counter == 0:
-            self.write_label.emit(f"Waiting for\nOpponent move")
-        self.bar_update_counter += 2
-        if self.bar_update_counter > 98:
-            self.bar_update_counter = 2
-        self.progress.emit(self.bar_update_counter)
-        if bot_move is None:
-            bot_move = "xxx"
-        
+    def detect_move(self):
         screenshot = pyautogui.screenshot()
-        screenshot.save("pictures/turn_screen.png")
-        imagDet = ImageDetection(self)
-        screen = imagDet.loadImag("pictures/turn_screen.png")
+        screenshot.save(self.turn_img)
+        imagDet = ImageDetection(self, self.logger)
+        screen = imagDet.loadImag(self.turn_img)
         fmove = False
         smove = False
+        color_counter = 0
         for field in self.field_Cords:
             
             x = self.field_Cords[field][0]
@@ -231,6 +194,7 @@ class Manager(QObject):
             if (screen[y2, x2][0] <= 115 and
                 screen[y2, x2][1] >= 235 and
                     screen[y2, x2][2] >= 235):
+                color_counter += 1
                 yellow_white = [screen[y2, x2][0],
                                 screen[y2, x2][1], screen[y2, x2][2]]
                 if list(screen[y+int(self.field_height/2-13), x]) == yellow_white:
@@ -243,25 +207,42 @@ class Manager(QObject):
                 screen[y2, x2][1] >= 193 and
                 screen[y2, x2][2] <= 198 and
                 screen[y2, x2][2] >= 177):
+                color_counter += 1
                 yellow_green = [screen[y2, x2][0],
                                 screen[y2, x2][1], screen[y2, x2][2]]
                 if list(screen[y+int(self.field_height/2-13), x]) == yellow_green:
                     fmove = field
                 else:
                     smove = field
-            if fmove and smove and str(fmove+smove) not in bot_move:
-                try:
-                    
-                    chessBoard.makeMove(f"{fmove}{smove}")
-                    self.myturn = True
-                    print()
-                    print(f"\nOpponent move: {fmove}{smove}")
-                    self.write_label.emit(f"Opponent move: \n{fmove}{smove}")
-                    print(chessBoard.getBoard())
-                    self.progress.emit(100)
-                    self.bar_update_counter = 0
-                except ValueError:
-                    self.logger.error(f"Failed to get opponent move")
+            
+        if color_counter > 2:
+            return False, False
+        return fmove, smove
+            
+    def opponent_Turn(self, bot_move, chessBoard):
+        if self.bar_update_counter == 0:
+            self.write_label.emit(f"Waiting for\nOpponent move")
+        self.bar_update_counter += 2
+        if self.bar_update_counter > 98:
+            self.bar_update_counter = 2
+        self.progress.emit(self.bar_update_counter)
+        if bot_move is None:
+            bot_move = "xxx"
+        
+        fmove, smove = self.detect_move()
+
+        if fmove and smove and str(f"{fmove}{smove}") not in bot_move:
+            try:
+                chessBoard.makeMove(f"{fmove}{smove}")
+                self.myturn = True
+                self.write_label.emit(f"Opponent move: \n{fmove}{smove}")
+                print(chessBoard.getBoard())
+                self.progress.emit(100)
+                self.bar_update_counter = 0
+            except ValueError as e:
+                self.logger.warning(f"Something wrong with opponent move: {e}")
+
+
 
 
 

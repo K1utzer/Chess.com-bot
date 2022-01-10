@@ -47,7 +47,8 @@ class ImageDetection:
 
 
     def calculate_field_cords(self, top_left, field_h, field_w, manager):
-        screenimg = cv.imread("pictures/screen.png", cv.IMREAD_UNCHANGED)
+        
+        screenimg = cv.imread("pictures/turn_screen.png", cv.IMREAD_UNCHANGED)
         bottom_right = (int(top_left[0]+field_w), int(top_left[1]+field_h))
         start_X = top_left[0]
         start_Y = top_left[1]
@@ -58,9 +59,9 @@ class ImageDetection:
         oneTwothree = "87654321"
         myturn = True
         #cv.circle(
-        #    screenimg, (start_X+int(field_w/2), top_left[1]+int(field_h-13)), 5, color=(35, 120, 255))
+        #    screenimg, (start_X+int(field_w/2), top_left[1]+int(field_h/2)), 5, color=(35, 120, 255))
         #cv.imwrite("test.png", screenimg)
-        if screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][0] > 200 and screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][1] > 200 and screenimg[top_left[1]+int(field_h-13), start_X+int(field_w/2)][2] > 200:
+        if screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][0] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][1] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][2] > 200:
             oneTwothree = "12345678"
             abc = "hgfedcba"
             myturn = False
@@ -96,8 +97,8 @@ class ImageDetection:
             cv.putText(screenimg, str(key), tuple(
                 c), cv.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, color=(142, 142, 142))
         #cv.imshow('Result', screenimg)
-        cv.imwrite("board_result.jpg", screenimg)
-        screenimg = cv.imread("board_result.jpg")
+        #cv.imwrite("pictures/board_detection.jpg", screenimg)
+        #screenimg = cv.imread("pictures/board_detection.jpg")
         cv.imwrite("pictures/board_detection.png",
                    screenimg[start_Y:int(start_Y+(field_h*8)), start_X:int(start_X+(field_w*8))])
         manager.update_image("pictures/board_detection.png")

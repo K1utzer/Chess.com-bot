@@ -3,9 +3,6 @@ import time
 
 class MouseControl:
 
-    def __init__(self, logger):
-        
-        self.logger = logger
     def mousePos(self, x, y):
         win32api.SetCursorPos((x, y))
 
