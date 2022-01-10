@@ -4,18 +4,16 @@ The bot plays on chess.com for you.
 
 It uses the Stockfish13 engine and image detection (opencv)
 
-Download Stockfish engine [here](https://stockfishchess.org/) and add it to the stockfish folder.
+Download Stockfish engine [here](https://stockfishchess.org/), add it to the stockfish folder and put the filename in the config
 
-[Youtube video](https://youtu.be/17iM9LtQpU0) of the bot is playing
 
+
+![](doc/bot_play.gif)
 
 
 **Settings on chess.com:**
 * Always Promote to Queen
 
-
-### Board detection:
-![Board result](/board_detection.PNG)
 
 
 ## Install libaries
@@ -28,18 +26,26 @@ pip install -r requirements.txt
 
 ## Config
 
-* stockfish_path_name: the path to the stockfish .exe9
-* legit: the bot takes random pauses to look legit (not included yet)
-* keepPlaying: the bot will search for next game, if the recent is finished (not included yet)
+* stockfish_path_name: the filename of the stockfish.exe
+
 
 ## Play
 
-Start a game on chess.com
+to start the script:
+```
+python -m bot.py
+```
 
-start bot and have your browser visible (the chess.com page):
-```
-python bot.py
-```
+Detect the board before you start a game on this page:
+![Chess.com page](doc/Detect_board.JPG)
+
+Search for a game.
+When found, start the bot.
+
+It will show the best moves by standard. You can check the "auto mouse control" checkbox if you want the bot to make your move.
+
+
+
 ## Warning
 
 **The use of external software is forbidden on chess.com.**

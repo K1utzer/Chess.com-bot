@@ -6,5 +6,4 @@ numpy
 pyautogui
 pillow
 keyboard
-stockfishpy
 pypiwin32
