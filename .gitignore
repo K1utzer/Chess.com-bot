@@ -9,3 +9,4 @@ logs/
 pictures/turn_screen.png
 pictures/screen.png
 pictures/board_detection.png
+__pycache__/
