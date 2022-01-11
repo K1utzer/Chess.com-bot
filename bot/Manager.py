@@ -362,7 +362,6 @@ class GUI(QMainWindow):
             self.manager.stopped_bot.connect(
                 lambda: self.show_image('pictures/board_detection.png')
             )
-            
             self.at_finish()
             
 
@@ -415,6 +414,8 @@ class GUI(QMainWindow):
         self.thread.finished.connect(
             lambda: self.b_detect.setEnabled(True)
         )
+        self.started = False
+        
 
         
         
