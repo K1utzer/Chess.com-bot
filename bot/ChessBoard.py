@@ -10,3 +10,5 @@ class ChessBoard:
 
     def makeMove(self, move):
         self.board.push_san(move)
+    def getPiece(self, field):
+        return str(self.board.piece_at(chess.parse_square(field)))

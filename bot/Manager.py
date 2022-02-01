@@ -73,8 +73,8 @@ class Manager(QObject):
             self.logger.warning(f"Stockfish path wrong")
             self.write_label.emit("Stockfish path \nwrong")
             self.game_stopped = True
-        bot_move = None
-
+        bot_move = "xxx"
+        opponent_move = "xxx"
         while self.game_running and not self.game_stopped:
 
             tmp_turn = self.myturn
@@ -85,10 +85,10 @@ class Manager(QObject):
             if self.myturn:
                 self.progress.emit(self.bar_update_counter)
 
-                bot_move = self.bot_Turn(stockfish, chessBoard)
+                bot_move = self.bot_Turn(stockfish, chessBoard, opponent_move)
             else:
 
-                self.opponent_Turn(bot_move, chessBoard)
+                opponent_move = self.opponent_Turn(bot_move, chessBoard)
             if not tmp_turn == self.myturn and self.game_running:
                 self.show_new_image(self.turn_img, imageDet)
                 self.moves_counter += 1
@@ -105,7 +105,7 @@ class Manager(QObject):
             self.board_coordinates[0][0], self.board_coordinates[0][1], self.board_coordinates[0][0]+self.board_width, self.board_coordinates[0][1]+self.board_height)
         self.update_image(path_name)
         
-    def bot_Turn(self, stockfish: StockfishManager, chessBoard):
+    def bot_Turn(self, stockfish: StockfishManager, chessBoard, opponnentMove):
         try:
             best_move = stockfish.get_best_move(chessBoard.getBoard())
         except Exception as e:
@@ -162,7 +162,9 @@ class Manager(QObject):
                 
             fmove, smove = self.detect_move()
             
-            if fmove and smove:
+            if fmove and smove and str(f"{fmove}{smove}") not in opponnentMove:
+                if "1" in smove and chessBoard.getPiece(fmove) == "p":
+                    smove = f"{smove}Q"
                 try:
                     chessBoard.makeMove(f"{fmove}{smove}")
                     self.myturn = False
@@ -226,12 +228,13 @@ class Manager(QObject):
         if self.bar_update_counter > 98:
             self.bar_update_counter = 2
         self.progress.emit(self.bar_update_counter)
-        if bot_move is None:
-            bot_move = "xxx"
         
         fmove, smove = self.detect_move()
 
         if fmove and smove and str(f"{fmove}{smove}") not in bot_move:
+            if "1" in smove and chessBoard.getPiece(fmove) == "p":
+                smove = f"{smove}Q"
+                
             try:
                 chessBoard.makeMove(f"{fmove}{smove}")
                 self.myturn = True
@@ -239,6 +242,7 @@ class Manager(QObject):
                 print(chessBoard.getBoard())
                 self.progress.emit(100)
                 self.bar_update_counter = 0
+                return str(f"{fmove}{smove}")
             except ValueError as e:
                 self.logger.warning(f"Something wrong with opponent move: {e}")
 
@@ -304,15 +308,33 @@ class GUI(QMainWindow):
         self.set_label_text("")
         self.b_start.setEnabled(False)
         
+        self.board_detected = False
+        
         self.b_start.clicked.connect(self.start_bot)
         self.b_quit.clicked.connect(self.quit_programm)
         self.b_detect.clicked.connect(self.detect_board)
         self.b_Settings.clicked.connect(self.show_settings)
+        self.b_checkDetection.clicked.connect(self.check_detection)
         
         self.logger.info(f"Init Main Window")
+        
+        
 
+    def check_detection(self):
+        if self.board_detected:
+            self.clear_image()
+            screenshot = pyautogui.screenshot()
+            screenshot.save(f"pictures/check_detection.png")
+            imageDet = ImageDetection(self, self.logger)
+            imageDet.saveResizedImag(f"pictures/check_detection.png",
+                                     self.boardCoordinates[0][0], self.boardCoordinates[0][1],
+                                     self.boardCoordinates[0][0]+self.boardWidth, self.boardCoordinates[0][1]+self.boardHeight)
+            self.show_image(f"pictures/check_detection.png")
+            
 
-
+        else:
+            self.set_label_text("Detect Board first")
+            
     def start_bot(self):
         
         if not self.started:
@@ -375,6 +397,7 @@ class GUI(QMainWindow):
     def board_found(self, found):
         if found:
             self.b_start.setEnabled(True)
+            self.board_detected = True
             self.label_board_found.setText("Board detected")
             self.label_board_found.setStyleSheet("color: green")
             self.b_checkDetection.setEnabled(True)
