@@ -15,6 +15,9 @@ Download Stockfish engine at: https://stockfishchess.org/, add it to the stockfi
 * Always Promote to Queen
 
 
+## Notes
+
+No exception handling yet so the script is likely to crash
 
 ## Install libaries
 
