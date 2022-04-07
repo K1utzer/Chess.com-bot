@@ -2,7 +2,7 @@ import configparser
 import chess
 
 import time
-
+import sys
 import cv2 as cv
 import numpy as np
 
@@ -28,6 +28,13 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import StaleElementReferenceException
 
+if sys.version_info[0] < 3:
+    raise Exception("Must be using Python 3. Developed with Python 3.8.8")
+if sys.version_info[1] != 8:
+    print("WARNING: Developed with Python version 3.8.8. May not work properly if used with another version")
+elif sys.version_info[2] != 8:
+    print("WARNING: Developed with Python version 3.8.8. May not work properly if used with another version")
+	 
 
 config = configparser.ConfigParser()
 config.read("config.cfg")
