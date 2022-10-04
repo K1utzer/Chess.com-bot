@@ -61,11 +61,14 @@ class ImageDetection:
         #cv.circle(
         #    screenimg, (start_X+int(field_w/2), top_left[1]+int(field_h/2)), 5, color=(35, 120, 255))
         #cv.imwrite("test.png", screenimg)
-        if screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][0] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][1] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][2] > 200:
-            oneTwothree = "12345678"
-            abc = "hgfedcba"
-            myturn = False
-
+        try:
+            if screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][0] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][1] > 200 and screenimg[top_left[1]+int(field_h/2), start_X+int(field_w/2)][2] > 200:
+                oneTwothree = "12345678"
+                abc = "hgfedcba"
+                myturn = False
+        except IndexError as e:
+            self.logger.error(f"INDEXERROR: {e}.\ntop_left[1]={top_left[1]}\nfield_h/2={field_h/2}\nstart_X={start_X}\nfield_w/2={field_w/2}")
+            raise e
         for c in range(8):
             firstX = True
             if not firstY:
@@ -116,6 +119,7 @@ class ImageDetection:
         img = cv.imread(img_path)
         cv.circle(img, (x, y), 5, color=(0, 0, 255))
         cv.imwrite(img_path, img)
+        
     def draw_rec_on_img(self, img_path, x1, y1, x2, y2):
         img = cv.imread(img_path)
         cv.rectangle(img, (x1, y1), (x2, y2), color=(
