@@ -11,3 +11,4 @@ pictures/screen.png
 pictures/board_detection.png
 pictures/check_detection.png
 __pycache__/
+config.cfg
