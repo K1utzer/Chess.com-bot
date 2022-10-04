@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 to start the script:
 ```
-python -m bot.py
+python -m bot
 ```
 
 Detect the board before you start a game on this page:
