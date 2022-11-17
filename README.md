@@ -8,7 +8,7 @@ Download Stockfish engine at: https://stockfishchess.org/, add it to the stockfi
 
 [Video of the bot playing](https://youtu.be/IrRqvy0pPSw)
 
-![](doc/bot_play.gif)
+![](./doc/bot_play.gif)
 
 
 **Settings on chess.com:**
